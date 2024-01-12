@@ -3,6 +3,9 @@ version: '2.4'
 volumes:
   rmqdata:
     external: false
+  pgdata:
+    external: true
+      
 
 networks:
   botnet:
@@ -42,3 +45,15 @@ services:
       - rmqdata:/var/lib/rabbitmq
     networks:
       - botnet
+
+  postgres: 
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    networks:
+      - botnet
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    shm_size: '256mb'
