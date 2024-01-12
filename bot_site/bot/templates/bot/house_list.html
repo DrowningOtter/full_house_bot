@@ -1,0 +1,21 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+<h1>Your houses</h1>
+<ul>
+    <a href="{% url 'bot:house-create' %}">Add House</a>
+</ul>
+{% if house_list %}
+<ol>
+    {% for house in house_list %}
+    <li value="{{ house.house_number }}">
+        <a href="{% url 'bot:house-detail' house.pk %}">{{ house.house_name }} ({{ house.address }})</a> --- 
+        <a href="{% url 'bot:house-update' house.pk %}">Edit</a>
+        <a href="{% url 'bot:house-delete' house.pk %}">Delete</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<p>There are no added houses.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,44 @@
+version: '2.4'
+
+volumes:
+  rmqdata:
+    external: false
+
+networks:
+  botnet:
+    external: false
+
+services:
+  admin:
+    build: 
+      context: ../..
+      dockerfile: bot_site/Dockerfile
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+    command: python bot_site/manage.py runserver
+    networks:
+      - botnet
+
+  bot:
+    build:
+      context: ../..
+      dockerfile: bot/Dockerfile
+    command: python bot/main.py
+    networks:
+      - botnet
+
+  rabbit:
+    image: rabbitmq:3.10.7-management
+    hostname: rabbitmq
+    ports:
+     - 15672:15672
+     
+    restart: always
+    environment:
+     - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 536870912
+    volumes:
+      - rmqdata:/var/lib/rabbitmq
+    networks:
+      - botnet

@@ -1,0 +1,47 @@
+{% extends "bot/base_generic.html" %}
+{% block content %}
+<h1>House details</h1>
+{% if house %}
+    <a href="{% url 'bot:house-update' house.pk %}">Edit</a>
+    <a href="{% url 'bot:house-delete' house.pk %}">Delete</a>
+    <div style=margin-top:20px">
+        <strong>Name:</strong> {{ house.house_name }}<br>
+        <strong>Address:</strong> {{ house.address }}<br>
+        <p><strong>Photos:</strong></p>
+        {% if house.photo_set.all %}
+            {% for image in house.photo_set.all %}
+            <img src="{{ image.photo.url }} " alt="House Photo" style="max-height:300px;">
+            {% endfor %}
+        {% else %}
+            <p>There are no added photos.</p>
+        {% endif %}
+        <p><strong>Videos:</strong></p>
+        {% if house.video_set.all %}
+            {% for video in house.video_set.all %}
+                <video width="640" heigth="360" controls>
+                    <source src="{{ video.video.url }}" type="video/mp4">
+                    Your browser doesn't support video tag.
+                </video>
+            {% endfor %}
+        {% else %}
+            <p>There are no videos.</p>
+        {% endif %}
+    </div>
+    <div style="margin-top:20px;">
+        <p><strong>Related questions:</strong></p>
+        {% if house.question_set.all %}
+            <ol>
+            {% for question in house.question_set.all|dictsort:"question_number" %}
+                <li value="{{ question.question_number }}">
+                    <a href="{% url 'bot:question-detail' question.id %}">{{ question.question_text }}</a>
+                </li>
+            {% endfor %}
+            </ol>
+        {% else %}
+            <p>There are no related questions for this house.</p>
+        {% endif %}
+    </div>
+{% else %}
+    <p>There are no houses.</p>
+{% endif %}
+{% endblock %}

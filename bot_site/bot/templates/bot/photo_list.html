@@ -1,0 +1,17 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+<h1>Your Photos</h1>
+{% if photo_list %}
+<ul>
+    {% for photo in photo_list %}
+    <li>
+        <a href="{{ photo.photo.url }}">{{ photo.photo }}</a>
+        <img src="{{ photo.photo.url }}" style="max-height:200px;">
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>There are no added photos.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+    <h1>{% if object %}Edit House{% else %}Create House{% endif %}</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_form_errors }}
+        {{ form.as_p }}
+        <br>
+        <h4>Photos:</h4>
+        {{ photos.non_form_errors }}
+        {{ photos.management_form }}
+        <ul>
+            {% for form in photos %}
+                {{ form.as_p }}
+                <hr>
+            {% endfor %}
+        </ul>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'bot:houses' %}">Cancel</a>
+{% endblock %}

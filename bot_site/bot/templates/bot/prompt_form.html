@@ -1,0 +1,22 @@
+{% extends "bot/base_generic.html" %}
+
+
+
+{% block content %}
+<div style="margin-top:50px;">
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+        <table>
+            {% for form in formset %}
+                {{ form.non_form_errors }}
+                <tr>
+                    <td width="400px" style="border: 1px solid #000; padding: 8px;">{{ form.helper_text.value }}</td>
+                    <td style="border: 1px solid #000; padding: 8px;">{{ form.prompt }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button type="submit">Save</button>
+    </form>
+</div>
+{% endblock %}

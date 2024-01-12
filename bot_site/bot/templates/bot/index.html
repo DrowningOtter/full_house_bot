@@ -1,0 +1,11 @@
+{% extends "bot/base_generic.html" %}
+<!-- Home page, should redirect to login if user is not authenticated
+else show some page like "Hello, very happy to see you" -->
+{% block content %}
+<h1>Welcome!</h1>
+<p>Glad to see you there!</p>
+{% endblock %}
+
+{% block sidebar %}
+{{ block.super }}
+{% endblock %}

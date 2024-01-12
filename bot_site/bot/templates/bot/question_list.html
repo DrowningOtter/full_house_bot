@@ -1,0 +1,19 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+<h1>Your questions</h1>
+<ul><a href="{% url 'bot:question-create' %}">Add Question</a></ul>
+{% if question_list %}
+<ol>
+    {% for question in question_list %}
+    <li value="{{ question.question_number }}">
+        <a href="{% url 'bot:question-detail' question.pk %}">{{ question.question_text }}</a> ---
+        <a href="{% url 'bot:question-update' question.pk %}">Edit</a>
+        <a href="{% url 'bot:question-delete' question.pk %}">Delete</a>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<p>There are no added questions.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+    <h1>{% if object %}Edit Question{% else %}Create Question{% endif %}</h1>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_form_errors }}
+        {{ form.as_p }}
+        <br>
+        <h4>Photos related to this question:</h4>
+        {{ photos.non_form_errors }}
+        {{ photos.management_form }}
+        <ul>
+            {% for photo in photos %}
+                {{ photo.as_p }}
+            {% endfor %}
+        </ul>
+        <h4>Videos related to this question:</h4>
+        {{ videos.non_form_errors }}
+        {{ videos.management_form }}
+        <ul>
+            {% for video in videos %}
+                {{ video.as_p}}
+            {% endfor %}
+        </ul>
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'bot:questions' %}">Cancel</a>
+{% endblock %}

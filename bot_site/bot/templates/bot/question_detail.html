@@ -1,0 +1,37 @@
+{% extends "bot/base_generic.html" %}
+{% block content %}
+<h1>Question details</h1>
+{% if question %}
+    <a href="{% url 'bot:question-update' question.pk %}">Edit</a>
+    <a href="{% url 'bot:question-delete' question.pk %}">Delete</a>
+    <div style="margin-left:20px;margin-top:20px">
+        <p><strong>Question text:</strong></p>
+        <ul>{{ question.question_text }}</ul>
+        <p><strong>Answer text:</strong></p>
+        <ul>{{ question.answer_text }}</ul>
+        <p><strong>Photos:</strong></p>
+        {% if question.photo_set.all %}
+            {% for photo in question.photo_set.all %}
+                <img src="{{ photo.photo.url }}" style="max-height:300px;">
+            {% endfor %}
+        {% else %}
+            <p>There are no added photos.</p>
+        {% endif %}
+        <p><strong>Videos:</strong></p>
+        {% if question.video_set.all %}
+            {% for video in question.video_set.all %}
+                <video width="640" heigth="360" controls>
+                    <source src="{{ video.video.url }}" type="video/mp4">
+                    Your browser doesn't support video tag.
+                </video>
+            {% endfor %}
+        {% else %}
+            <p>There are no added videos.</p>
+        {% endif %}
+        <strong>Related house:</strong>
+        <a href="{% url 'bot:house-detail' question.house.pk %}">{{ question.house }}</a>
+    </div>
+{% else %}
+    <p>Question doesn't exist.</p>
+{% endif %}
+{% endblock %}

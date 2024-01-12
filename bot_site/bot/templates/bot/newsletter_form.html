@@ -1,0 +1,10 @@
+{% extends "bot/base_generic.html" %}
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Send</button>
+        <a href="">Cancel</a>
+    </form>
+{% endblock %}
