@@ -16,9 +16,10 @@ async def get_prompt(prompt_name):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute(f'SELECT prompt FROM bot_prompt WHERE user_id = {USER_ID} AND prompt_name = "{prompt_name}"')
+    logging.info(f'SELECT prompt FROM bot_prompt WHERE user_id = {USER_ID} AND prompt_name = "{prompt_name}"')
     res = cursor.fetchall()
-    logging.info("get_prompt result: ", res)
-    if len(res) == 0:
+    logging.info("-----------------res = ", res)
+    if res == []:
         return ""
     prompt = res[0][0]
     conn.close()

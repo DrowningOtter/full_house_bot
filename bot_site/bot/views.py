@@ -19,7 +19,7 @@ from .forms import (PhotoForm, HouseForm, QuestionForm,
                     PromptFormSet, NewsletterForm)
 
 from pika import BlockingConnection, URLParameters
-from bot_management.conf import RABBITMQ_LOGIN, RABBITMQ_PASSWORD, RABBITMQ_QUEUE_NAME
+from bot_management.conf import RABBITMQ_LOGIN, RABBITMQ_PASSWORD, RABBITMQ_QUEUE_NAME, RABBITMQ_HOST_NAME
 
 @login_required
 def index(request):
@@ -325,7 +325,7 @@ def send_newsletter(request):
                 cursor.execute(f"""SELECT tg_user_id FROM bot_registeredusers WHERE user_id = {request.user.id}""")
                 user_list = [item[0] for item in cursor.fetchall()]
             # отправить сообщение в тг
-            connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@localhost/"))
+            connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST_NAME}/"))
             channel = connection.channel()
             queue_name = RABBITMQ_QUEUE_NAME + str(request.user.id)
             print("DEBUG: queue_name=", queue_name)

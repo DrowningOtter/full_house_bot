@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 from pika import BlockingConnection, ConnectionParameters, URLParameters
-from bot_management.conf import RABBITMQ_LOGIN, RABBITMQ_PASSWORD, RABBITMQ_QUEUE_NAME
+from bot_management.conf import RABBITMQ_LOGIN, RABBITMQ_PASSWORD, RABBITMQ_QUEUE_NAME, RABBITMQ_HOST_NAME
 
 class Photo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,7 +22,7 @@ class Photo(models.Model):
 def create_rabbitmq_queue(sender, instance, created, **kwargs):
     if created:
         # Создание очереди RabbitMQ
-        connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@localhost/"))
+        connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST_NAME}/"))
         channel = connection.channel()
         queue_name = RABBITMQ_QUEUE_NAME + str(instance.id)
         queue = channel.queue_declare(queue_name)
