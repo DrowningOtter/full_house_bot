@@ -1,0 +1,57 @@
+{% extends "bot/base_generic.html" %}
+{% block sidebar %}
+<div class="container m-0">
+    <div class="row justify-content-start">
+      <div style="flex: 1;" class="col-3">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
+          <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+              {% url 'bot:houses' as houses_url %}
+              <a href="{% url 'bot:houses' %}" 
+              {% if request.path == houses_url %} class="nav-link active" 
+              {% else %} class="nav-link text-white" 
+              {% endif %} aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#home"></use></svg>
+                Houses
+              </a>
+            </li>
+            <li>
+              {% url 'bot:questions' as questions_url %}
+              <a href="{% url 'bot:questions' %}"
+              {% if request.path == questions_url %} class="nav-link active"
+              {% else %} class="nav-link text-white"
+              {% endif %} aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#speedometer2"></use></svg>
+                Questions
+              </a>
+            </li>
+            <li>
+              {% url 'bot:photos' as photos_url %}
+              <a href="{% url 'bot:photos' %}"
+              {% if request.path == photos_url %} class="nav-link active"
+              {% else %} class="nav-link text-white"
+              {% endif %} aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#table"></use></svg>
+                Photos
+              </a>
+            </li>
+            <li>
+              {% url 'bot:videos' as videos_url %}
+              <a href="{% url 'bot:videos' %}"
+              {% if request.path == videos_url %} class="nav-link active"
+              {% else %} class="nav-link text-white"
+              {% endif %} aria-current="page">
+                <svg class="bi pe-none me-2" width="16" height="16"><use xlink:href="#grid"></use></svg>
+                Videos
+              </a>
+            </li>
+          </ul>
+        
+        </div>
+      </div>
+      <div class="col-9">
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,10 +1,10 @@
-{% extends "bot/base_generic.html" %}
+{% extends "bot/header.html" %}
 {% block content %}
 <h1>House details</h1>
 {% if house %}
     <a href="{% url 'bot:house-update' house.pk %}">Edit</a>
     <a href="{% url 'bot:house-delete' house.pk %}">Delete</a>
-    <div style=margin-top:20px">
+    <div style="margin-top:20px">
         <strong>Name:</strong> {{ house.house_name }}<br>
         <strong>Address:</strong> {{ house.address }}<br>
         <p><strong>Photos:</strong></p>

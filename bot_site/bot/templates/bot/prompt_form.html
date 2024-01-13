@@ -1,21 +1,19 @@
-{% extends "bot/base_generic.html" %}
+{% extends "bot/header.html" %}
 
 
 
 {% block content %}
-<div style="margin-top:50px;">
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        {{ formset.non_form_errors }}
-        <table>
-            {% for form in formset %}
-                {{ form.non_form_errors }}
-                {{ form.errors }}
-                {{ form.as_table }}
-            {% endfor %}
-        </table>
-        <button type="submit">Save</button>
-    </form>
-</div>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    {{ formset.non_form_errors }}
+    <table>
+        {% for form in formset %}
+            {{ form.non_form_errors }}
+            {{ form.errors }}
+            {{ form.as_table }}
+        {% endfor %}
+    </table>
+    <button type="submit">Save</button>
+</form>
 {% endblock %}
