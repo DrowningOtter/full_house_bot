@@ -305,13 +305,33 @@ class HouseDelete(LoginRequiredMixin, HouseAccessMixin, DeleteView):
 @login_required
 def update_prompts(request):
     if request.method == "POST":
+        print(f"DEBUG: user={request.user}")
         formset = PromptFormSet(request.POST, user=request.user)
         if formset.is_valid():
+            forms = formset.save(commit=False)
+            for prompt in forms:
+                prompt.user = request.user
             formset.save()
             return redirect(reverse('bot:prompts-update'))
+        else:
+            return render(request, "bot/prompt_form.html", {'formset': formset})
     else:
         formset = PromptFormSet(user=request.user)
     return render(request, "bot/prompt_form.html", {'formset': formset})
+
+class PromptsUpdate(LoginRequiredMixin, QuestionAccessMixin, UpdateView):
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        formset = PromptFormSet(user=request.user)(self.request.POST, instance=self.object)
+        if formset.is_valid():
+            return self.form_valid(formset)
+        else:
+            return self.form_invalid(formset)
+        
+    def form_valid(self, formset):
+        prompts = formset.save(commit=False)
+        for prompt in prompts:
+            prompt.user = self.request.user
 
 
 @login_required

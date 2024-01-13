@@ -58,6 +58,7 @@ class PromptForm(forms.ModelForm):
         model = Prompt
         fields = ['helper_text', 'prompt']
         widgets = {
+            'helper_text': forms.TextInput(attrs={'readonly': 'readonly', 'style': 'width: 400px'}),
             'prompt': forms.Textarea(attrs={'cols': 50, 'rows':1}),
         }
 
@@ -70,12 +71,13 @@ class PromptFormAdmin(forms.ModelForm):
         }
 
 class BasePromptFormSet(BaseModelFormSet):
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.queryset = Prompt.objects.filter(user=user)
 
 
-PromptFormSet = modelformset_factory(Prompt, form=PromptForm, formset=BasePromptFormSet, extra=0)
+PromptFormSet = modelformset_factory(Prompt, form=PromptForm, formset=BasePromptFormSet, extra=0, edit_only=True)
 
 class NewsletterForm(forms.Form):
     text_field = forms.CharField(
