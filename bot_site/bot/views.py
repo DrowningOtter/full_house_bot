@@ -342,6 +342,7 @@ def send_newsletter(request):
                 routing_key=queue_name,
             )
             connection.close()
+            return redirect(reverse("bot:newsletter"))
     else:
         form = NewsletterForm()
     return render(request, "bot/newsletter_form.html", {'form': form})

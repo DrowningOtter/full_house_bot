@@ -21,6 +21,7 @@ async def reg_user(reg_id):
         cursor.execute("""
                         INSERT INTO bot_registeredusers (user_id, tg_user_id)
                         VALUES (%s, %s)
+                        ON CONFLICT DO NOTHING;
                         """, (USER_ID, reg_id))
         conn.commit()
     except Exception as ex:
@@ -34,21 +35,20 @@ async def get_prompt(prompt_name):
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     cursor.execute(f"SELECT prompt FROM bot_prompt WHERE user_id = {USER_ID} AND prompt_name = '{prompt_name}'")
-    logging.info(f"SELECT prompt FROM bot_prompt WHERE user_id = {USER_ID} AND prompt_name = '{prompt_name}'")
     res = cursor.fetchall()
-    logging.info("-----------------res = ", " ".join(["("+", ".join(item)+")" for item in res]))
+    # logging.info("-----------------res = ", " ".join(["("+", ".join(item)+")" for item in res]))
     if res == []:
-        return ""
+        return "505 Internal error"
     prompt = res[0][0]
     conn.close()
     return prompt
 
-# TODO fix query idiot
-async def get_question_with_answer(number:int):
-    conn = psycopg2.connect(**db_params)
-    cursor = conn.cursor()
-    cursor.execute(f'SELECT question_text, answer_text FROM bot_question ')
-    conn.close()
+# # TODO fix query idiot
+# async def get_question_with_answer(number:int):
+#     conn = psycopg2.connect(**db_params)
+#     cursor = conn.cursor()
+#     cursor.execute(f'SELECT question_text, answer_text FROM bot_question ')
+#     conn.close()
 
 async def get_house_list():
     conn = psycopg2.connect(**db_params)
@@ -63,8 +63,9 @@ async def get_house_numbers():
     conn = psycopg2.connect(**db_params)
     cursor = conn.cursor()
     cursor.execute(f'SELECT house_number FROM bot_house WHERE user_id = {USER_ID}')
+    res = [int(num[0]) for num in cursor.fetchall()]
     conn.close()
-    return [int(num[0]) for num in cursor.fetchall()]
+    return res
 
 async def get_house_videos(house_number):
     conn = psycopg2.connect(**db_params)
@@ -88,7 +89,6 @@ async def get_house_info(house_number):
                     WHERE user_id = {USER_ID} AND house_number = {house_number}
                     ''')
     house_info = cursor.fetchall()[0]
-    # return '\n'.join(row)
     conn.close()
     return f"Дом успешно выбран!\n<b>Название дома:</b> {house_info[0]}\n<b>Адрес:</b> {house_info[1]}"
 
@@ -113,6 +113,8 @@ async def get_questions_list(house_number):
                     WHERE user_id = {USER_ID} AND house_id = (SELECT id FROM bot_house WHERE house_number = {house_number})
                     ''')
     questions = cursor.fetchall()
+    if questions == []:
+        return ["empty questions list"]
     conn.close()
     return [f"{item[0]}. {item[1]}" for item in questions]
 
@@ -140,8 +142,11 @@ async def get_questions_numbers(house_number):
                         SELECT id FROM bot_house WHERE 
                             house_number = {house_number} AND user_id = {USER_ID})
                     ''')
+    res = [int(num[0]) for num in cursor.fetchall()]
+    if res == []:
+        return "empty questions list"
     conn.close()
-    return [int(num[0]) for num in cursor.fetchall()]
+    return res
 
 async def get_question_photos(house_number, q_number):
     conn = psycopg2.connect(**db_params)

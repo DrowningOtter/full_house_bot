@@ -11,7 +11,7 @@ class PhotoForm(forms.ModelForm):
 class HouseForm(forms.ModelForm):
     class Meta:
         model = House
-        fields = ['house_name', 'address', ]
+        fields = ['house_name', 'address', 'house_number']
 
 
 class VideoForm(forms.ModelForm):
@@ -61,6 +61,13 @@ class PromptForm(forms.ModelForm):
             'prompt': forms.Textarea(attrs={'cols': 50, 'rows':1}),
         }
 
+class PromptFormAdmin(forms.ModelForm):
+    class Meta:
+        model = Prompt
+        fields = ['prompt_name', 'prompt', 'helper_text']
+        widgets = {
+            'prompt': forms.Textarea(attrs={'cols': 60, 'rows': 5}),
+        }
 
 class BasePromptFormSet(BaseModelFormSet):
     def __init__(self, user, *args, **kwargs):
