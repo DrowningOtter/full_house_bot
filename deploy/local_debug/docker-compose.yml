@@ -20,9 +20,12 @@ services:
       - 8000
     ports:
       - 8000:8000
-    command: python bot_site/manage.py runserver 0.0.0.0:8000
+    command:  bash bot_site/run.sh
     networks:
       - botnet
+    depends_on:
+      - postgres
+      - rabbit
 
   bot:
     build:
@@ -48,10 +51,13 @@ services:
 
   postgres: 
     image: postgres:16
+    container_name: postgres_host
+    hostname: postgres_host
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: full_house
     networks:
       - botnet
     volumes:
