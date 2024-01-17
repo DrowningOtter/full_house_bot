@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import BaseInlineFormSet, inlineformset_factory, modelformset_factory, BaseModelFormSet
 from .models import House, Photo, Question, Video, Prompt
+from django.utils.safestring import SafeString
 
 class PhotoForm(forms.ModelForm):
     class Meta:
@@ -54,6 +55,10 @@ VideoFormSet = modelformset_factory(Video, form=VideoForm, can_delete=True, can_
 
 
 class PromptForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["helper_text"].widget.attrs.update({"class": "helper-text-widget"})
+        self.fields["prompt"].widget.attrs.update({"class": "prompt-widget"})
     class Meta:
         model = Prompt
         fields = ['helper_text', 'prompt']
@@ -77,11 +82,12 @@ class BasePromptFormSet(BaseModelFormSet):
         self.queryset = Prompt.objects.filter(user=user)
 
 
+
 PromptFormSet = modelformset_factory(Prompt, form=PromptForm, formset=BasePromptFormSet, extra=0, edit_only=True)
 
 class NewsletterForm(forms.Form):
     text_field = forms.CharField(
-        label="Enter text of the newsletter", 
+        label="Newsletter text", 
         widget=forms.TextInput(attrs={
             'placeholder': 'Enter your text here',
             'cols': 50,

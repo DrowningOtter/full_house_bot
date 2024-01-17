@@ -37,3 +37,24 @@
       </header>
     </div>
 {% endblock %}
+
+{% block head_addition %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static bot/css/style.css %}">
+{%endblock %}
+
+{% block header %}
+    <header class="header">
+      <a href="#" class="logo">Logo</a>
+
+      <nav class="navbar">
+        <a href="#">Home</a>
+        <a href="#">Prompts</a>
+        <a href="#">Newsletter</a>
+        <a href="#">Houses</a>
+        <a href="#">Questions</a>
+        <a href="#">Photos</a>
+        <a href="#">Videos</a>
+      </nav>
+    </header>
+{% endblock %}

@@ -1,0 +1,86 @@
+/* Стили для основного контейнера формы */
+.form-container {
+    width: 80%;
+    margin: 0 auto;
+    background-color: transparent;
+    backdrop-filter: blur(25px);
+    padding: 20px;
+    border-radius: 10px;
+    border: 10px solid rgba(255, 255, 255, .2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для формы внутри контейнера */
+.form-container form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+/* Стили для форм-роу внутри формы */
+.form-row {
+    display: flex;
+    margin-bottom: 20px;
+    width: 100%;
+}
+  
+/* Стили для textarea внутри форм-роу */
+.textarea-widget {
+    display: inline-block;
+    width: 80%;
+    height: 50px;
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+    overflow: auto;
+    margin-left: auto;
+    background: transparent;
+    color: #d6d8ef;
+}
+
+.label-widget[readonly] {
+    display: inline-block;
+    padding: 8px;
+    margin-right: 20px;
+    border: 0;
+    background-color: transparent;
+    color: #d6d8ef;
+    font-size: 16px;
+    cursor: not-allowed;
+    /* Дополнительные стили для текста внутри readonly input */
+    width: 35%;
+    min-width: 200px;
+    vertical-align: bottom;
+    line-height: 2;
+}
+  
+/* Стили для кнопки "Save" */
+.button {
+    /* background-color: #24a2ec; */
+    background-color: rgba(36, 162, 236, 0.4);
+    width: 30%;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    align-self: center;
+    text-decoration: none;
+    text-align: center;
+}
+  
+.button:hover {
+    background-color: #817bf7;
+    transform: scale(1.1);
+    transition: 0.3s ease;
+}
+
+.button-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: space-evenly;
+}

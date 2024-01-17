@@ -1,4 +1,4 @@
-{% extends "bot/header.html" %}
+{% extends "bot/base_generic.html" %}
 
 {% block content %}
     <h1>{% if object %}Edit House{% else %}Create House{% endif %}</h1>
@@ -19,4 +19,40 @@
         <button type="submit">Save</button>
     </form>
     <a href="{% url 'bot:houses' %}">Cancel</a>
+
+
+
+	<h1>{% if object %}Edit House{% else %} Create House{% endif %}</h1>
+	<div class="form-container">
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ form.non_form_errors}}
+			{{ form.id }}
+			<div class="form-row">
+				<label for="{{form.house_name.id_for_label}}">{{form.house_name.label}}:</label>
+				<input type="text" name="{{form.house_name.name}}" 
+				id="{{form.house_name.id_for_label}}" maxlength="{{form.house_name.field.widget.attrs.maxlength}}">
+			</div>
+			<div class="form-row">
+				<label for="{{form.address.id_for_label}}">{{form.address.label}}</label>
+				<input type="text" name="{{form.address.name}}" maxlength="{{form.address.field.widget.attrs.maxlength}}" required id="{{form.address.id_for_label}}">
+			</div>
+			<div class="form-row">
+				<label for="{{form.house_number.id_for_label}}">{{form.house_number.label}}:</label>
+				<input type="number" name="{{form.house_number.name}}" min="{{form.house_number.field.widget.attrs.min}}"
+				required id="{{form.house_number.id_for_label}}">
+			</div>
+			<h4>Photos</h4>
+			{{ photos.non_form_errors }}
+			{{ photos.management_form }}
+			{% for photo in photos %}
+				<div class="form-row">
+					<label for="{{photo.photo.id_for_label}}">{{photo.photo.label}}</label>
+					<input type="file" name="{{photo.photo.name}}" accept="{{photo.photo.field.widget.attrs.accept}}" id="{{photo.photo.id_for_label}}">
+					<input type="hidden" name="{{photo.photo.id}}">
+					{{ photo.dir }}
+				</div>
+			{% endfor %}
+		</form>
+	</div>
 {% endblock %}

@@ -1,19 +1,37 @@
-{% extends "bot/header.html" %}
+{% extends "bot/base_generic.html" %}
+{% load bot_extras %}
 
-
+{% block head_addition %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
+{% endblock %}
 
 {% block content %}
-<form action="" method="post">
+
+
+{% if formset.forms %}
+<div class="form-container">
+  <form action="" method="post">
     {% csrf_token %}
     {{ formset.management_form }}
     {{ formset.non_form_errors }}
-    <table>
-        {% for form in formset %}
-            {{ form.non_form_errors }}
-            {{ form.errors }}
-            {{ form.as_table }}
-        {% endfor %}
-    </table>
-    <button type="submit">Save</button>
-</form>
+    {% for form in formset %}
+    <div class="form-row">
+      {{ form.non_form_errors }}
+      {{ form.errors }}
+      {{ form.id }}
+      <input type="text" name="{{form.prefix}}-helper_text" class="label-widget" 
+      id="{{form.helper_text.id_for_label}}" value="{{form.helper_text.value}}" readonly>
+      {{ form.prompt|add_class:"textarea-widget" }}
+    </div>
+    {% endfor %}
+    <div class="button-wrapper">
+      <button type="submit" class="button">Save</button>
+    </div>
+  </form>
+</div>
+{% else %}
+  <p>There are no prompts :( <br><strong>Please, contact administator.</strong></p>
+{% endif %}
+
 {% endblock %}

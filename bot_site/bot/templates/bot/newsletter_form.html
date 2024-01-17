@@ -1,10 +1,24 @@
-{% extends "bot/header.html" %}
+{% extends "bot/base_generic.html" %}
+
+{% block head_addition %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
+{% endblock %}
 
 {% block content %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Send</button>
-        <a href="">Cancel</a>
-    </form>
+<div class="form-container">
+	<form action="" method="post">
+		{% csrf_token %}
+		{{ form.non_form_errors }}
+		<div class="form-row">
+			<label for="{{form.text_field.id_for_label}}" class="label-widget" readonly>{{ form.text_field.label}}</label>
+			<input type="text" name="{{form.text_field.name}}" placeholder="{{form.text_field.field.widget.attrs.placeholder}}" 
+			class="textarea-widget" required_id="{{form.text_field.id_for_label}}">
+		</div>
+		<div class="button-wrapper">
+			<button type="submit" class="button">Send</button>
+			<a href="{% url 'bot:index' %}" class="button">Cancel</a>
+		</div>
+	</form>
+</div>
 {% endblock %}
