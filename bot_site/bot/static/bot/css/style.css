@@ -19,7 +19,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 100px;
+  padding: 20px 50px;
   background: transparent;
   display: flex;
   justify-content: space-between;
@@ -34,27 +34,57 @@ body {
   font-weight: 700;
 }
 
+.nav-header {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.navbar ul {
+  list-style: none;
+}
+
+.navbar li {
+  height: 50px;
+}
+
 .navbar a {
-  position: relative;
-  font-size: 18px;
-  color: #fff;
-  font-weight: 500;
+  height: 100%;
+  padding: 0 30px;
   text-decoration: none;
-  margin-left: 40px;
+  display: flex;
+  align-items: center;
+  color: white;
+  font-weight: 500;
 }
 
-.navbar a::before {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #fff;
-  transition: .3s;
+.navbar a:hover {
+  background-color: #1d51c3;
 }
 
-.navbar a:hover::before {
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 250px;
+  z-index: 999;
+  background-color: rgba(40, 103, 135, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.sidebar li {
+  width: 100%;
+}
+
+.sidebar a {
   width: 100%;
 }
 
@@ -82,4 +112,23 @@ body {
 .btn:hover {
   background-color: #2980b9;
   transform: scale(1.1);
+}
+
+.menu-button {
+  display: none;
+}
+
+@media(max-width: 1200px) {
+  .hideOnMobile {
+    display: none;
+  }
+  .menu-button {
+    display: block;
+  }
+}
+
+@media(max-width: 400px) {
+  .sidebar {
+    width: 100%;
+  }
 }
