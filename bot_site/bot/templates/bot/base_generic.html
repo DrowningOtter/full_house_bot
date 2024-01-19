@@ -24,18 +24,25 @@
           <li><a href="{% url 'bot:newsletter' %}">Newsletter</a></li>
           <li><a href="{% url 'bot:houses' %}">Houses</a></li>
           <li><a href="{% url 'bot:questions' %}">Questions</a></li>
-          <li><a href="{% url 'bot:photos' %}">Photos</a></li>
-          <li><a href="{% url 'bot:videos' %}">Videos</a></li>
+          <!-- <li><a href="{% url 'bot:photos' %}">Photos</a></li>
+          <li><a href="{% url 'bot:videos' %}">Videos</a></li> -->
           <li><a href="{% url 'logout' %}" class="btn">Logout</a></li>
         </ul>
         <ul class="nav-header">
-          <li class="hideOnMobile"><a href="{% url 'bot:index' %}">Home</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:prompts-update' %}">Prompts</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:newsletter' %}">Newsletter</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:houses' %}">Houses</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:questions' %}">Questions</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:photos' %}">Photos</a></li>
-          <li class="hideOnMobile"><a href="{% url 'bot:videos' %}">Videos</a></li>
+          {% url 'bot:index' as index_path %}
+          <li class="hideOnMobile {% if request.path == index_path %}choosen-link{% endif %}" ><a href="{% url 'bot:index' %}">Home</a></li>
+          {% url 'bot:prompts-update' as prompts_path %}
+          <li class="hideOnMobile {% if request.path == prompts_path %}choosen-link{% endif %}"><a href="{% url 'bot:prompts-update' %}">Prompts</a></li>
+          {% url 'bot:newsletter' as newletter_path %}
+          <li class="hideOnMobile {% if request.path == newletter_path %}choosen-link{% endif %}"><a href="{% url 'bot:newsletter' %}">Newsletter</a></li>
+          {% url 'bot:houses' as houses_path %}
+          <li class="hideOnMobile {% if request.path == houses_path %}choosen-link{% endif %}"><a href="{% url 'bot:houses' %}">Houses</a></li>
+          {% url 'bot:questions' as questions_path %}
+          <li class="hideOnMobile {% if request.path == questions_path %}choosen-link{% endif %}"><a href="{% url 'bot:questions' %}">Questions</a></li>
+          <!-- {% url 'bot:photos' as photos_path %}
+          <li class="hideOnMobile {% if request.path == photos_path %}choosen-link{% endif %}"><a href="{% url 'bot:photos' %}">Photos</a></li>
+          {% url 'bot:videos' as videos_path %}
+          <li class="hideOnMobile {% if request.path == videos_path %}choosen-link{% endif %}"><a href="{% url 'bot:videos' %}">Videos</a></li> -->
           <li class="hideOnMobile"><a href="{% url 'logout' %}" class="btn">Logout</a></li>
           <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="40" viewBox="0 -960 960 960" width="40"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></a></li>
         </ul>
@@ -45,7 +52,7 @@
       {% block content %}
       {% endblock %}
     </div>
-
+    {% block scripts %}{% endblock %}
     <script>
       function showSidebar() {
         const sidebar = document.querySelector('.sidebar')

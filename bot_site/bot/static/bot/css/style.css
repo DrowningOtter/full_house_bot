@@ -12,6 +12,8 @@ body {
   background: url('../images/luna-noch-ozera-pejzazh-priroda-50020.jpeg') no-repeat;
   background-size: cover;
   background-position: center;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .header {
@@ -34,11 +36,15 @@ body {
   font-weight: 700;
 }
 
+.navbar {
+  width: 70%;
+}
+
 .nav-header {
   width: 100%;
   list-style: none;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -89,7 +95,6 @@ body {
 }
 
 .content {
-  position: fixed;
   margin-left: 5%;
   width: 100%;
   margin-top: 150px;
@@ -116,6 +121,7 @@ body {
 
 .menu-button {
   display: none;
+  margin-left: auto;
 }
 
 @media(max-width: 1200px) {
@@ -131,4 +137,30 @@ body {
   .sidebar {
     width: 100%;
   }
+}
+
+.choosen-link {
+  background: rgba(65, 172, 234, 0.5);
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #093351;
+}
+
+/* Стили для ползунка (бегунка) прокрутки */
+body::-webkit-scrollbar-thumb {
+  background-color: #3498db; /* Цвет ползунка */
+  border-radius: 10px; /* Скругление углов ползунка */
+  /* border: 2px solid #ffffff; Обводка ползунка */
+  border: 0; /* Обводка ползунка */
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); /* Тень ползунка */
+}
+
+/* Стили для трека (фона) прокрутки при наведении */
+body::-webkit-scrollbar-thumb:hover {
+  background-color: #2980b9; /* Новый цвет ползунка при наведении */
 }

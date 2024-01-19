@@ -2,6 +2,7 @@
 .form-container {
     width: 80%;
     margin: 0 auto;
+    margin-bottom: 200px;
     background-color: transparent;
     backdrop-filter: blur(25px);
     padding: 20px;
@@ -28,17 +29,18 @@
 .textarea-widget {
     display: inline-block;
     width: 80%;
-    height: 50px;
+    height: fit-content;
     padding: 10px;
     font-size: 17px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    resize: vertical;
-    overflow: auto;
+    resize: none;
+    overflow: hidden;
     margin-left: auto;
     background: transparent;
     color: #d6d8ef;
+    max-height: none;
 }
 
 .label-widget[readonly] {
@@ -84,3 +86,17 @@
     display: flex;
     justify-content: space-evenly;
 }
+
+@media(max-width: 1200px) {
+    .form-row {
+      flex-direction: column;
+    }
+    .textarea-widget {
+        margin-left: 0;
+        width: 100%;
+    }
+    .label-widget[readonly] {
+        width: 100%;
+    }
+  }
+  

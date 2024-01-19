@@ -23,4 +23,7 @@ urlpatterns = [
 
     path('prompts/', views.update_prompts, name='prompts-update'),
     path('newsletter/', views.send_newsletter, name='newsletter'),
+
+    #DEBUG, SHOULD REMOVE!!!
+    path('create_queue', views.create_queue),
 ]

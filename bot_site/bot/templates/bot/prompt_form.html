@@ -22,7 +22,7 @@
       {{ form.id }}
       <input type="text" name="{{form.prefix}}-helper_text" class="label-widget" 
       id="{{form.helper_text.id_for_label}}" value="{{form.helper_text.value}}" readonly>
-      {{ form.prompt|add_class:"textarea-widget" }}
+      {{ form.prompt }}
     </div>
     {% endfor %}
     <div class="button-wrapper">
@@ -33,5 +33,24 @@
 {% else %}
   <p>There are no prompts :( <br><strong>Please, contact administator.</strong></p>
 {% endif %}
+{% endblock %}
 
+{% block scripts %}
+  <script>
+    function autoResize(textarea) {
+      textarea.style.height = '1px';
+      textarea.style.height = (textarea.scrollHeight + 2) + 'px';
+    }
+  </script>
+  <script>
+    function autoAdjustTextareaHeight() {
+      const textareas = document.querySelectorAll('.textarea-widget');
+      textareas.forEach(textarea => {
+        textarea.style.height = '1px';
+        textarea.style.height = (textarea.scrollHeight + 2) + 'px';
+      });
+    }
+
+    window.addEventListener('load', autoAdjustTextareaHeight);
+  </script>
 {% endblock %}

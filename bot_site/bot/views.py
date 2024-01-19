@@ -366,3 +366,30 @@ def send_newsletter(request):
     else:
         form = NewsletterForm()
     return render(request, "bot/newsletter_form.html", {'form': form})
+
+
+# DEBUG, SHOULD REMOVE!!!
+from bot_management.conf import (RABBITMQ_LOGIN, RABBITMQ_PASSWORD,
+                                 RABBITMQ_QUEUE_NAME, RABBITMQ_HOST_NAME,
+                                 RABBITMQ_CONNECT_RETRIES, DELAY_BETWEEN_RETRIES)
+def create_queue(request):
+    # usage: /create_queue?id=value
+    for attempt_number in range(1, RABBITMQ_CONNECT_RETRIES + 1):
+        try:
+            connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST_NAME}/"))
+            if connection:
+                print("Successfully connected to RabbitMQ")
+                break
+        except Exception as ex:
+            sleep(DELAY_BETWEEN_RETRIES)
+            print(ex)
+            print(f"Failed to connect to RabbitMQ. Retrying...(attempt number {attempt_number})")
+    else:
+        print("Failed to connect... Exiting")
+        return
+    channel = connection.channel()
+    queue_name = RABBITMQ_QUEUE_NAME + request.GET.get('id')
+    queue = channel.queue_declare(queue_name)
+    channel.queue_bind(exchange="amq.direct", queue=queue_name, routing_key=queue_name)
+    connection.close()
+    return redirect(reverse("bot:index"))

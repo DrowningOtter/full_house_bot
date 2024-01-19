@@ -55,16 +55,12 @@ VideoFormSet = modelformset_factory(Video, form=VideoForm, can_delete=True, can_
 
 
 class PromptForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["helper_text"].widget.attrs.update({"class": "helper-text-widget"})
-        self.fields["prompt"].widget.attrs.update({"class": "prompt-widget"})
     class Meta:
         model = Prompt
         fields = ['helper_text', 'prompt']
         widgets = {
-            'helper_text': forms.TextInput(attrs={'readonly': 'readonly', 'style': 'width: 400px'}),
-            'prompt': forms.Textarea(attrs={'cols': 50, 'rows':1}),
+            'helper_text': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'helper-text-widget'}),
+            'prompt': forms.Textarea(attrs={'class': 'textarea-widget', 'oninput': 'autoResize(this)'}),
         }
 
 class PromptFormAdmin(forms.ModelForm):
