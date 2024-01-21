@@ -36,21 +36,5 @@
 {% endblock %}
 
 {% block scripts %}
-  <script>
-    function autoResize(textarea) {
-      textarea.style.height = '1px';
-      textarea.style.height = (textarea.scrollHeight + 2) + 'px';
-    }
-  </script>
-  <script>
-    function autoAdjustTextareaHeight() {
-      const textareas = document.querySelectorAll('.textarea-widget');
-      textareas.forEach(textarea => {
-        textarea.style.height = '1px';
-        textarea.style.height = (textarea.scrollHeight + 2) + 'px';
-      });
-    }
-
-    window.addEventListener('load', autoAdjustTextareaHeight);
-  </script>
+  <script type="text/javascript" src="{% static 'bot/js/main.js' %}"></script>
 {% endblock %}

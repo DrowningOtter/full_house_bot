@@ -1,16 +1,22 @@
 {% extends "bot/base_generic.html" %}
+
+{% block head_addition %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bot/css/house_detail.css' %}">
+{% endblock %}
+
 {% block content %}
 <h1>House details</h1>
 {% if house %}
-    <a href="{% url 'bot:house-update' house.pk %}">Edit</a>
-    <a href="{% url 'bot:house-delete' house.pk %}">Delete</a>
+    <a href="{% url 'bot:house-update' house.pk %}" class="btn">Edit</a>
+    <a href="{% url 'bot:house-delete' house.pk %}" class="btn">Delete</a>
     <div style="margin-top:20px">
         <strong>Name:</strong> {{ house.house_name }}<br>
         <strong>Address:</strong> {{ house.address }}<br>
         <p><strong>Photos:</strong></p>
         {% if house.photo_set.all %}
             {% for image in house.photo_set.all %}
-            <img src="{{ image.photo.url }} " alt="House Photo" style="max-height:300px;">
+            <img src="{{ image.photo.url }} " alt="House Photo" class="house-detail-image">
             {% endfor %}
         {% else %}
             <p>There are no added photos.</p>

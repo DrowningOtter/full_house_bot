@@ -1,21 +1,42 @@
 {% extends "bot/base_generic.html" %}
 
+{% block head_addition %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bot/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Your houses</h1>
-<ul>
-    <a href="{% url 'bot:house-create' %}">Add House</a>
-</ul>
-{% if house_list %}
-<ol>
-    {% for house in house_list %}
-    <li value="{{ house.house_number }}">
-        <a href="{% url 'bot:house-detail' house.pk %}">{{ house.house_name }} ({{ house.address }})</a> --- 
-        <a href="{% url 'bot:house-update' house.pk %}">Edit</a>
-        <a href="{% url 'bot:house-delete' house.pk %}">Delete</a>
-    </li>
-    {% endfor %}
-</ol>
-{% else %}
-<p>There are no added houses.</p>
-{% endif %}
+	{% load bot_extras %}
+	<h1>Your houses</h1>
+	<a href="{% url 'bot:house-create' %}" class="btn">Add House</a>
+	{% if house_list %}
+		{% for house in house_list %}
+			<div class="house-card">
+				<div class="image-buttons">
+					{% with first_photo=house.photo_set.all|first%}
+					<a href="{% url 'bot:house-detail' house.pk %}"><img src="{{first_photo.photo.url}}" alt=""></a>
+					{% endwith %}
+					<a href="{% url 'bot:house-update' house.pk %}" class="house-btn">Edit</a>
+					<a href="{% url 'bot:house-delete' house.pk %}" class="house-btn">Delete</a>
+				</div>
+				<div class="card-content">
+					<div class="card-content-row">
+						<label for="">{{house|verbose_name:"house_number"}}:</label>
+						{{house.house_number}}
+					</div>
+					<div class="card-content-row">
+						<label for="">{{house|verbose_name:"house_name"}}: </label>
+						{{ house.house_name }}
+					</div>
+					<div class="card-content-row">
+						<label for="">{{house|verbose_name:"address"}}:</label>
+						{{house.address}}
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>There are no added houses.</p>
+	{% endif %}
 {% endblock %}

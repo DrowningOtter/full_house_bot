@@ -68,15 +68,16 @@ def video_pre_delete(sender, instance, **kwargs):
 
 class House(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    house_number = models.PositiveIntegerField()
-    house_name = models.CharField(max_length=100, blank=True, null=True)
-    address = models.CharField(max_length=100)
+    house_number = models.PositiveIntegerField('House number')
+    house_name = models.CharField('House name', max_length=100, blank=True, null=True)
+    address = models.CharField('Address', max_length=100)
 
     def __str__(self):
         return f"{self.house_number}. {self.house_name} ({self.address})"
     
     def get_absolute_url(self):
         return reverse('bot:house-detail', args=[str(self.id)])
+
 
 class Question(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

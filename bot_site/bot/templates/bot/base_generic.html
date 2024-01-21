@@ -53,15 +53,6 @@
       {% endblock %}
     </div>
     {% block scripts %}{% endblock %}
-    <script>
-      function showSidebar() {
-        const sidebar = document.querySelector('.sidebar')
-        sidebar.style.display = 'flex'
-      }
-      function hideSidebar() {
-        const sidebar = document.querySelector('.sidebar')
-        sidebar.style.display = 'none'
-      }
-    </script>
+    <script type="text/javascript" src="{% static 'bot/js/main.js' %}"></script>
   </body>
 </html>

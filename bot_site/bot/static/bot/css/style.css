@@ -22,7 +22,7 @@ body {
   left: 0;
   width: 100%;
   padding: 20px 50px;
-  background: transparent;
+  background-color: rgba(8, 35, 55, 1.0);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -124,6 +124,23 @@ body {
   margin-left: auto;
 }
 
+.label-widget {
+  display: inline-block;
+  width: 80%;
+  height: fit-content;
+  padding: 10px;
+  font-size: 17px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: none;
+  overflow: hidden;
+  margin-left: auto;
+  background: transparent;
+  color: #d6d8ef;
+  max-height: none;
+}
+
 @media(max-width: 1200px) {
   .hideOnMobile {
     display: none;
@@ -163,4 +180,55 @@ body::-webkit-scrollbar-thumb {
 /* Стили для трека (фона) прокрутки при наведении */
 body::-webkit-scrollbar-thumb:hover {
   background-color: #2980b9; /* Новый цвет ползунка при наведении */
+}
+
+.house-card {
+  margin: 30px 30px 30px 0px;
+  width: 80%;
+  background-color: rgb(9, 46, 70);
+  padding: 20px;
+  border-radius: 10px;
+  border: 10px solid rgba(255, 255, 255, .2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+}
+
+.house-btn {
+  margin: 10px 0;
+  display: inline-block;
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 15px;
+  text-decoration: none;
+  width: 100%;
+  background-color: #3498db;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+/* border-radius: 5px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+transition: background-color 0.3s ease; */
+
+.house-card img {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.image-buttons {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+
+.card-content-row {
+  width: 100%;
 }

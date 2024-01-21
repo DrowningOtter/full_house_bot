@@ -9,3 +9,10 @@ def add_class(value, class_name):
         "class": " ".join((value.css_classes(), class_name))
     })
     return ret
+
+@register.filter
+def verbose_name(obj, field):
+    value = obj._meta.get_field(field).verbose_name
+    if value == "":
+        return "blank value"
+    return value

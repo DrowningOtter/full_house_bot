@@ -1,58 +1,39 @@
 {% extends "bot/base_generic.html" %}
 
+{% load static %}
+
+{% block head_addition %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'bot/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
+{% endblock %}
+
 {% block content %}
-    <h1>{% if object %}Edit House{% else %}Create House{% endif %}</h1>
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_form_errors }}
-        {{ form.as_p }}
-        <br>
-        <h4>Photos:</h4>
-        {{ photos.non_form_errors }}
-        {{ photos.management_form }}
-        <ul>
-            {% for form in photos %}
-                {{ form.as_p }}
-                <hr>
-            {% endfor %}
-        </ul>
-        <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'bot:houses' %}">Cancel</a>
-
-
-
-	<h1>{% if object %}Edit House{% else %} Create House{% endif %}</h1>
 	<div class="form-container">
-		<form action="" method="post">
+		<h1>{% if object %}Edit House{% else %}Create House{% endif %}</h1>
+		<form action="" method="post" enctype="multipart/form-data">
 			{% csrf_token %}
-			{{ form.non_form_errors}}
-			{{ form.id }}
-			<div class="form-row">
-				<label for="{{form.house_name.id_for_label}}">{{form.house_name.label}}:</label>
-				<input type="text" name="{{form.house_name.name}}" 
-				id="{{form.house_name.id_for_label}}" maxlength="{{form.house_name.field.widget.attrs.maxlength}}">
-			</div>
-			<div class="form-row">
-				<label for="{{form.address.id_for_label}}">{{form.address.label}}</label>
-				<input type="text" name="{{form.address.name}}" maxlength="{{form.address.field.widget.attrs.maxlength}}" required id="{{form.address.id_for_label}}">
-			</div>
-			<div class="form-row">
-				<label for="{{form.house_number.id_for_label}}">{{form.house_number.label}}:</label>
-				<input type="number" name="{{form.house_number.name}}" min="{{form.house_number.field.widget.attrs.min}}"
-				required id="{{form.house_number.id_for_label}}">
-			</div>
-			<h4>Photos</h4>
-			{{ photos.non_form_errors }}
-			{{ photos.management_form }}
-			{% for photo in photos %}
+			{{ form.non_form_errors }}
+			{% for field in form %}
 				<div class="form-row">
-					<label for="{{photo.photo.id_for_label}}">{{photo.photo.label}}</label>
-					<input type="file" name="{{photo.photo.name}}" accept="{{photo.photo.field.widget.attrs.accept}}" id="{{photo.photo.id_for_label}}">
-					<input type="hidden" name="{{photo.photo.id}}">
-					{{ photo.dir }}
+					<label for="{{field.id_for_label}}">{{field.label}}:</label>
+					{{ field }}
 				</div>
 			{% endfor %}
+
+			<!-- <h4>Photos:</h4> -->
+			{{ photos.non_form_errors }}
+			{{ photos.management_form }}
+			{% for form in photos %}
+				<div class="form-row">
+					{{ form }}
+				</div>
+			{% endfor %}
+			<button type="submit" class="button">Save</button>
 		</form>
 	</div>
+
+	{% block scripts %}
+  <script type="text/javascript" src="{% static 'bot/js/main.js' %}"></script>
+	{% endblock %}
 {% endblock %}

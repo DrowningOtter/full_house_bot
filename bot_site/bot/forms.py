@@ -13,6 +13,19 @@ class HouseForm(forms.ModelForm):
     class Meta:
         model = House
         fields = ['house_name', 'address', 'house_number']
+        widgets = {
+            'house_name': forms.Textarea(attrs={
+                'class': 'textarea-widget',
+                'oninput': 'autoResize(this)',
+            }),
+            'address': forms.Textarea(attrs={
+                'class': 'textarea-widget',
+                'oninput': 'autoResize(this)',
+            }),
+            'house_number': forms.TextInput(attrs={
+                'class': 'label-widget',
+            }),
+        }
 
 
 class VideoForm(forms.ModelForm):
@@ -83,10 +96,9 @@ PromptFormSet = modelformset_factory(Prompt, form=PromptForm, formset=BasePrompt
 
 class NewsletterForm(forms.Form):
     text_field = forms.CharField(
-        label="Newsletter text", 
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Enter your text here',
-            'cols': 50,
-            'rows': 10,
+        label="Newsletter text",
+        widget=forms.Textarea(attrs={
+            'class': 'textarea-widget',
+            'oninput': 'autoResize(this)',            
         })
     )
