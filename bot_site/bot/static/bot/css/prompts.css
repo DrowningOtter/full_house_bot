@@ -3,8 +3,7 @@
     width: 80%;
     margin: 0 auto;
     margin-bottom: 200px;
-    background-color: transparent;
-    backdrop-filter: blur(25px);
+    background-color: rgb(9, 46, 70);
     padding: 20px;
     border-radius: 10px;
     border: 10px solid rgba(255, 255, 255, .2);

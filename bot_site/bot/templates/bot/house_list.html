@@ -14,11 +14,15 @@
 		{% for house in house_list %}
 			<div class="house-card">
 				<div class="image-buttons">
-					{% with first_photo=house.photo_set.all|first%}
-					<a href="{% url 'bot:house-detail' house.pk %}"><img src="{{first_photo.photo.url}}" alt=""></a>
-					{% endwith %}
-					<a href="{% url 'bot:house-update' house.pk %}" class="house-btn">Edit</a>
-					<a href="{% url 'bot:house-delete' house.pk %}" class="house-btn">Delete</a>
+					<div class="image-buttons-image">
+						{% with first_photo=house.photo_set.all|first%}
+						<a href="{% url 'bot:house-detail' house.pk %}"><img src="{{first_photo.photo.url}}" alt=""></a>
+						{% endwith %}
+					</div>
+					<div class="image-buttons-buttons">
+						<a href="{% url 'bot:house-update' house.pk %}" class="house-btn">Edit</a>
+						<a href="{% url 'bot:house-delete' house.pk %}" class="house-btn">Delete</a>
+					</div>
 				</div>
 				<div class="card-content">
 					<div class="card-content-row">

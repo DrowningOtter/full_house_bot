@@ -1,19 +1,38 @@
 {% extends "bot/base_generic.html" %}
+{% load bot_extras %}
 
 {% block content %}
-<h1>Your questions</h1>
-<ul><a href="{% url 'bot:question-create' %}">Add Question</a></ul>
-{% if question_list %}
-<ol>
-    {% for question in question_list %}
-    <li value="{{ question.question_number }}">
-        <a href="{% url 'bot:question-detail' question.pk %}">{{ question.question_text }}</a> ---
-        <a href="{% url 'bot:question-update' question.pk %}">Edit</a>
-        <a href="{% url 'bot:question-delete' question.pk %}">Delete</a>
-    </li>
-    {% endfor %}
-</ol>
-{% else %}
-<p>There are no added questions.</p>
-{% endif %}
+	<h1>Your Questions</h1>
+	<a href="{% url 'bot:question-create' %}" class="btn">Add Question</a>
+	{% if question_list %}
+		{% for q in question_list %}
+			<div class="question-card">
+				<div class="question-card-content">
+					<div class="question-card-row">
+						<label for="">{{q|verbose_name:"question_number"}}:</label>
+						{{q.question_number}}
+					</div>
+					<div class="question-card-row">
+						<label for="">{{q|verbose_name:"question_text"}}:</label>
+						{{q.question_text}}
+					</div>
+					<div class="question-card-row">
+						<label for="">{{q|verbose_name:"answer_text"}}:</label>
+						{{q.answer_text}}
+					</div>
+					<div class="question-card-row">
+						<label for="">Related house:</label>
+						{{q.house}}
+					</div>
+				</div>
+				<div class="question-card-btns">
+					<a href="{% url 'bot:question-update' q.pk %}" class="question-btn">Edit</a>
+					<a href="{% url 'bot:question-delete' q.pk %}" class="question-btn">Delete</a>
+					<a href="{% url 'bot:question-detail' q.pk %}" class="question-btn">Question detail</a>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>There are no added questions.</p>
+	{% endif %}
 {% endblock %}

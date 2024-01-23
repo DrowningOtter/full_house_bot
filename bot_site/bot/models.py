@@ -81,9 +81,9 @@ class House(models.Model):
 
 class Question(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question_number = models.PositiveIntegerField()
-    question_text = models.TextField(max_length=200)
-    answer_text = models.TextField(max_length=500)
+    question_number = models.PositiveIntegerField('Question number')
+    question_text = models.TextField('Question text', max_length=200)
+    answer_text = models.TextField('Answer text', max_length=500)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
 
     def __str__(self):
