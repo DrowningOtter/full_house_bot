@@ -96,7 +96,9 @@ body {
 
 .content {
   margin-left: 5%;
-  width: 100%;
+  margin-right: 5%;
+  margin-bottom: 10%;
+  width: 90%;
   margin-top: 150px;
   color: #fff;
 }
@@ -116,7 +118,6 @@ body {
 
 .btn:hover {
   background-color: #2980b9;
-  transform: scale(1.1);
 }
 
 .menu-button {
@@ -181,7 +182,7 @@ body::-webkit-scrollbar-thumb:hover {
 
 .house-card {
   margin: 30px 30px 30px 0px;
-  width: 80%;
+  width: 100%;
   background-color: rgb(9, 46, 70);
   padding: 20px;
   border-radius: 10px;
@@ -223,7 +224,7 @@ transition: background-color 0.3s ease; */
 .image-buttons-buttons {
   padding: 0 10px;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: flex-start;
   flex-direction: column;
 }
 
@@ -235,11 +236,14 @@ transition: background-color 0.3s ease; */
 
 .card-content-row {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2%;
 }
 
 .question-card {
-  margin: 30px 30px 30px 0px;
-  width: 80%;
+  margin: 30px 0 30px 0px;
+  width: 100%;
   background-color: rgb(9, 46, 70);
   padding: 20px;
   border-radius: 10px;
@@ -261,24 +265,27 @@ transition: background-color 0.3s ease; */
   padding: 17px 10px 0 10px;
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .question-btn {
   margin: 0 10px;
-  display: inline-block;
   padding: 5px 10px;
   text-align: center;
   font-size: 15px;
   text-decoration: none;
-  width: 100%;
+  max-width: 100%;
   background-color: #3498db;
   color: #ffffff;
-  border-radius: 8px; 
+  border-radius: 8px;
+  margin-bottom: 3%;
 }
 
 @media(max-width: 550px) {
   .image-buttons {
     flex-direction: row;
+    justify-content: flex-end;
     margin-left: 0;
     width: 100%;
   }
@@ -291,7 +298,7 @@ transition: background-color 0.3s ease; */
   }
   .house-btn {
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -309,4 +316,104 @@ transition: background-color 0.3s ease; */
     flex-direction: column;
     margin: 5px 0;
   }
+  .question-card-btns {
+    flex-direction: column;
+  }
+}
+
+/* Общие стили для select */
+.select-widget {
+  width: 80%;
+  margin-left: auto;
+
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #d6d8ef;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Стили при наведении на select */
+.select-widget:hover {
+  border-color: #666;
+}
+
+/* Стили при фокусе на select */
+.select-widget:focus {
+  border-color: #4285f4;
+  box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+}
+
+/* Стили для стрелочки в select */
+.select-widget::-ms-expand {
+  display: none;
+}
+
+/* Стили для опций внутри select */
+.select-widget option {
+  background-color: #fff;
+  color: #333;
+}
+
+/* Стили для опций при наведении */
+.select-widget option:hover {
+  background-color: #e0e0e0;
+}
+
+@media(max-width: 1200px) {
+  .select-widget {
+    width: 100%;
+  }
+}
+
+.media-form-row  {
+  display: flex;
+  margin-bottom: 20px;
+  width: fit-content;
+  flex-direction: column;
+}
+
+.media-form-row  a {
+  color: #3498db; /* Цвет текста */
+  text-decoration: none; /* Убираем подчеркивание */
+  transition: color 0.3s ease; /* Плавное изменение цвета текста при наведении */
+  font-weight: bold; /* Жирный шрифт */
+}
+
+/* Стиль при наведении курсора */
+.media-form-row  a:hover {
+  color: #166ea8; /* Цвет текста при наведении */
+}
+
+/* Стиль для посещенных ссылок */
+.media-form-row  a:visited {
+  color: #3c34af; /* Цвет текста для посещенных ссылок */
+}
+
+.file-input-widget {
+  display: none;
+}
+
+.label-for-file-upload {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.add-media-button {
+  width: fit-content;
+  margin: 3% 0;
+  margin-top: -20px;
+  padding: 4px 8px;
+  font-size: 12px;
+  text-align: center;
+  text-decoration: underline;
+  cursor: pointer;
+  background-color: transparent;
+  color: #fff;
+  border: none;
 }

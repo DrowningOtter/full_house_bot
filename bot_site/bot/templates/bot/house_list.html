@@ -1,5 +1,7 @@
 {% extends "bot/base_generic.html" %}
 
+{% load i18n %}
+
 {% block head_addition %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'bot/css/style.css' %}">
@@ -8,8 +10,8 @@
 
 {% block content %}
 	{% load bot_extras %}
-	<h1>Your houses</h1>
-	<a href="{% url 'bot:house-create' %}" class="btn">Add House</a>
+	<h1>{% translate "Your houses" %}</h1>
+	<a href="{% url 'bot:house-create' %}" class="btn">{% translate "Add House" %}</a>
 	{% if house_list %}
 		{% for house in house_list %}
 			<div class="house-card">
@@ -20,8 +22,8 @@
 						{% endwith %}
 					</div>
 					<div class="image-buttons-buttons">
-						<a href="{% url 'bot:house-update' house.pk %}" class="house-btn">Edit</a>
-						<a href="{% url 'bot:house-delete' house.pk %}" class="house-btn">Delete</a>
+						<a href="{% url 'bot:house-update' house.pk %}" class="house-btn">{% translate "Edit" %}</a>
+						<a href="{% url 'bot:house-delete' house.pk %}" class="house-btn">{% translate "Delete" %}</a>
 					</div>
 				</div>
 				<div class="card-content">
@@ -41,6 +43,6 @@
 			</div>
 		{% endfor %}
 	{% else %}
-		<p>There are no added houses.</p>
+		<p>{% translate "There are no added houses." %}</p>
 	{% endif %}
 {% endblock %}

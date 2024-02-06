@@ -8,6 +8,10 @@ class PhotoForm(forms.ModelForm):
         model = Photo
         fields = ['photo']
 
+        widgets = {
+            'photo': forms.ClearableFileInput(attrs={'class': 'file-input-widget'}),
+        }
+
 
 class HouseForm(forms.ModelForm):
     class Meta:
@@ -23,7 +27,7 @@ class HouseForm(forms.ModelForm):
                 'oninput': 'autoResize(this)',
             }),
             'house_number': forms.TextInput(attrs={
-                'class': 'label-widget',
+                'class': 'input-widget',
             }),
         }
 
@@ -36,9 +40,11 @@ class VideoForm(forms.ModelForm):
 
 def create_custom_formset(parent_model, child_model, form, **kwargs):
     ModelFormSet = inlineformset_factory(parent_model, child_model, 
+                                         extra=1,
                                          form=form, 
                                          can_delete=True, 
-                                         can_delete_extra=False, **kwargs)
+                                         can_delete_extra=False,
+                                         **kwargs)
     class CustomModelFormSet(ModelFormSet):
         def save(self, user, house=None, commit=True):
             forms = super().save(commit=False)
@@ -56,6 +62,12 @@ class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         fields = ['question_text', 'answer_text', 'house', 'question_number']
+        widgets = {
+            'question_text': forms.Textarea(attrs={'class': 'textarea-widget'}),
+            'answer_text': forms.Textarea(attrs={'class': 'textarea-widget'}),
+            'question_number': forms.TextInput(attrs={'class': 'input-widget'}),
+            'house': forms.Select(attrs={'class': 'select-widget'}),
+        }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

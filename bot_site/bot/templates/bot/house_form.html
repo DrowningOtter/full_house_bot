@@ -1,6 +1,7 @@
 {% extends "bot/base_generic.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block head_addition %}
 {% load static %}
@@ -10,30 +11,107 @@
 
 {% block content %}
 	<div class="form-container">
-		<h1>{% if object %}Edit House{% else %}Create House{% endif %}</h1>
-		<form action="" method="post" enctype="multipart/form-data">
+		<h1>{% if object %}{% translate "Edit House" %}{% else %}{% translate "Create House" %}{% endif %}</h1>
+		<form action="" method="post" enctype="multipart/form-data" id="form-instance">
 			{% csrf_token %}
 			{{ form.non_form_errors }}
 			{% for field in form %}
 				<div class="form-row">
+					{{field.errors}}
 					<label for="{{field.id_for_label}}">{{field.label}}:</label>
 					{{ field }}
 				</div>
 			{% endfor %}
 
-			<!-- <h4>Photos:</h4> -->
+			<h4>{% translate "Photos related to this house:" %}</h4>
 			{{ photos.non_form_errors }}
 			{{ photos.management_form }}
-			{% for form in photos %}
-				<div class="form-row">
-					{{ form }}
+			{% for photo in photos %}
+				<div class="media-form-row photo-row">
+					{{photo.id}}
+					{% if photo.instance.photo %}
+					<a href="{{photo.instance.photo.url}}">{{photo.instance.photo.name}}</a>
+					<div class="uploaded-media-wrapper">
+
+						<label for="{{photo.DELETE.id_for_label}}">{% translate "Delete:" %}</label>
+						<input type="checkbox" name="{{photo.DELETE.html_name}}" id="{{photo.DELETE.id_for_label}}">
+					</div>
+					{% else %}
+					<div class="file-upload-wrapper">
+						<label class="label-for-file-upload" for="{{photo.photo.id_for_label}}">
+							{% translate "Choose file" %}
+						</label>
+						<span id="{{photo.photo.id_for_label}}-span"></span>
+						<input type="file" name="{{photo.photo.html_name}}" accept="image/*"
+							id="{{photo.photo.id_for_label}}" class="file-input-widget">
+					</div>
+						
+					{% endif %}
 				</div>
 			{% endfor %}
-			<button type="submit" class="button">Save</button>
+			<button id="add-photo-form" type="button" class="add-media-button">{% translate "Add another photo" %}</button>
+			<button type="submit" class="button">{% translate "Save" %}</button>
 		</form>
 	</div>
 
-	{% block scripts %}
-  <script type="text/javascript" src="{% static 'bot/js/main.js' %}"></script>
-	{% endblock %}
+{% endblock %}
+
+
+{% block scripts %}
+	<script type="text/javascript" src="{% static 'bot/js/main.js' %}"></script>
+{% for photo in photos %}
+    <script type="text/javascript"> // TODO должна добавлять только для еще не загруженных на сервер фоток
+        document.addEventListener('DOMContentLoaded', function() {
+            let fileInputElement = document.getElementById('{{photo.photo.id_for_label}}');
+			// console.log(fileInputElement);
+			if (fileInputElement) {
+				fileInputElement.addEventListener('change', function() {
+					var fileName = '';
+					fileName = this.value.split('\\').pop(); // Получение только имени файла, без пути
+					document.getElementById('{{photo.photo.id_for_label}}-span').innerHTML = fileName;
+				});
+			}
+        });
+    </script>
+{% endfor %}
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		let container = document.querySelector("#form-instance");
+		let addPhotoButton = document.querySelector("#add-photo-form");
+		let totalPhotoForms = document.querySelector('[id="id_photo_set-TOTAL_FORMS"][name="photo_set-TOTAL_FORMS"]');
+		addPhotoButton.addEventListener('click', addPhotoForm);
+		
+		function addPhotoForm(e) {
+			e.preventDefault();
+			let photoForm = document.querySelectorAll(".photo-row");
+			
+			let newPhotoForm = photoForm[photoForm.length - 1].cloneNode(true);
+			let formPhotoRegex = RegExp(`photo_set-(\\d){1}-`,'g');
+			newPhotoForm.innerHTML = newPhotoForm.innerHTML.replace(formPhotoRegex, `photo_set-${photoForm.length}-`);
+			console.log(newPhotoForm);
+			container.insertBefore(newPhotoForm, addPhotoButton);
+			resetPhotoFormValues(newPhotoForm);
+
+			totalPhotoForms.setAttribute('value', `${photoForm.length + 1}`);
+		}
+
+		function resetPhotoFormValues (form) {
+			let fileInputElement = form.querySelector('input[type="file"]');
+			console.log('found: ', fileInputElement);
+			if (fileInputElement) {
+				let spanElement = form.querySelector(`span[id="${fileInputElement.id}-span"]`);
+				console.log('found span element: ', spanElement);
+				if (spanElement) spanElement.innerHTML = "";
+				fileInputElement.addEventListener('change', function () {
+					var fileName = '';
+					fileName = fileInputElement.value.split('\\').pop(); // Получение только имени файла, без пути
+					spanElement.innerHTML = fileName;
+				});
+			} else {
+				console.log('fileInputElement not found');
+			}
+		}
+	});
+</script>
 {% endblock %}

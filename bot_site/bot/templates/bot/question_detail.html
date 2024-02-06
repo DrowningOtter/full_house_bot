@@ -1,38 +1,171 @@
 {% extends "bot/base_generic.html" %}
 
+{% load bot_extras %}
+{% load i18n %}
+
+{% block head_addition %}
+{% load static %}
+	<!-- Подключение стилей Glide.js -->
+	<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.core.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.theme.min.css"> -->
+	<link rel="stylesheet" href="{% static 'bot/css/glide.core.min.css' %}">
+	<link rel="stylesheet" href="{% static 'bot/css/glide.theme.min.css' %}">
+
+	<!-- Подключение скриптов Glide.js и его зависимостей (Popper.js и Splide.js) -->
+	<!-- <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide"></script>
+	<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+	<script src="https://unpkg.com/splide@2.0.0/dist/js/splide.js"></script> -->
+	<script src="{% static 'bot/js/glide.js' %}"></script>
+	<script src="{% static 'bot/js/popper.min.js' %}"></script>
+
+	<link rel="stylesheet" href="{% static 'bot/css/question_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'bot/css/style.css' %}">
+{% endblock %}
+
 {% block content %}
-<h1>Question details</h1>
-{% if question %}
-    <a href="{% url 'bot:question-update' question.pk %}">Edit</a>
-    <a href="{% url 'bot:question-delete' question.pk %}">Delete</a>
-    <div style="margin-left:20px;margin-top:20px">
-        <p><strong>Question text:</strong></p>
-        <ul>{{ question.question_text }}</ul>
-        <p><strong>Answer text:</strong></p>
-        <ul>{{ question.answer_text }}</ul>
-        <p><strong>Photos:</strong></p>
-        {% if question.photo_set.all %}
-            {% for photo in question.photo_set.all %}
-                <img src="{{ photo.photo.url }}" style="max-height:300px;">
-            {% endfor %}
-        {% else %}
-            <p>There are no added photos.</p>
-        {% endif %}
-        <p><strong>Videos:</strong></p>
-        {% if question.video_set.all %}
-            {% for video in question.video_set.all %}
-                <video width="640" heigth="360" controls>
-                    <source src="{{ video.video.url }}" type="video/mp4">
-                    Your browser doesn't support video tag.
-                </video>
-            {% endfor %}
-        {% else %}
-            <p>There are no added videos.</p>
-        {% endif %}
-        <strong>Related house:</strong>
-        <a href="{% url 'bot:house-detail' question.house.pk %}">{{ question.house }}</a>
+
+<div class="question-card">
+	<h1>{% translate "Question details" %}</h1>
+	<div class="media-container">
+		{% if question.photo_set.all %}
+			<div class="glide-container" id="photo-carousel">
+				<div class="glide">
+					<div class="glide__track" data-glide-el="track">
+						<ul class="glide__slides">
+							{% for photo in question.photo_set.all %}
+							<li class="glide__slide"><img src="{{photo.photo.url}}" alt="" class="question-detail-image"></li>
+							{% endfor %}
+						</ul>
+					</div>
+					<!-- <div class="glide__arrows" data-glide-el="controls">
+						<button class="glide__arrow glide__arrow--left" data-glide-dir="<">{% translate "prev" context "carousel button" %}</button>
+						<button class="glide__arrow glide__arrow--right" data-glide-dir=">">{% translate "next" context "carousel button" %}</button>
+					</div> -->
+					<div class="glide__bullets" data-glide-el="controls[nav]">
+						{% for photo in question.photo_set.all %}
+							<button class="glide__bullet" data-glide-dir="={{forloop.counter0}}"></button>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+
+		{% if question.video_set.all %}
+			<div class="glide-container" id="video-carousel">
+				<div class="glide">
+					<div class="glide__track" data-glide-el="track">
+						<ul class="glide__slides">
+							{% for video in question.video_set.all %}
+								<li class="glide__slide">
+									<div class="video-container">
+										<video controls>
+											<source src="{{video.video.url}}" type="video/mp4">
+											Your browser does not support video tag.
+										</video>
+									</div>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+					<!-- <div class="glide__arrows" data-glide-el="controls">
+						<button class="glide__arrow glide__arrow--left" data-glide-dir="<">{% translate "prev" context "carousel button" %}</button>
+						<button class="glide__arrow glide__arrow--right" data-glide-dir=">">{% translate "next" context "carousel button" %}</button>
+					</div> -->
+					<div class="glide__bullets" data-glide-el="controls[nav]">
+						{% for video in question.video_set.all %}
+							<button class="glide__bullet" data-glide-dir="={{forloop.counter0}}"></button>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		{% endif %}
+	</div>
+    <div class="question-card-content">
+        <div class="card-content-row">
+            <label for="">{{question|verbose_name:"question_number"}}:</label>
+            {{ question.question_number }}
+        </div>
+        <div class="card-content-row">
+            <label for="">{{question|verbose_name:"question_text"}}: </label>
+            {{ question.question_text }}
+        </div>
+        <div class="card-content-row">
+            <label for="">{{question|verbose_name:"answer_text"}}:</label>
+            {{ question.answer_text }}
     </div>
-{% else %}
-    <p>Question doesn't exist.</p>
-{% endif %}
+	<div class="button-wrapper">
+		<a href="{% url 'bot:question-update' question.pk %}" class="btn">{% translate "Edit" %}</a>
+		<a href="{% url 'bot:question-delete' question.pk %}" class="btn">{% translate "Delete" %}</a>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+	let scale = 0.7;
+	if (document.querySelector('#photo-carousel')) {
+		new Glide('#photo-carousel .glide', {
+			type: 'carousel',
+			startAt: 0,
+			perView: 1,
+			focusAt: 'center',
+			// gap: 50,
+		}).mount();
+	}
+	
+	if (document.querySelector('#video-carousel')) {
+		new Glide('#video-carousel .glide', {
+        type: 'carousel', 
+        startAt: 0,
+        perView: 1,
+        focusAt: 'center',
+    }).mount();
+	}
+
+    // Функция для определения высоты видимой области экрана
+    function getViewportHeight() {
+        return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+    }
+
+    // Функция для вычисления значения, равного высоте всей страницы минус высота хедера
+    function calculateContentHeight() {
+        var headerHeight = document.querySelector('.header').offsetHeight;
+        var viewportHeight = getViewportHeight();
+        var contentHeight = viewportHeight - headerHeight;
+
+        // Используйте значение contentHeight по вашему усмотрению
+        // console.log('Content Height:', contentHeight);
+        return contentHeight;
+    }
+
+    // Функция для установки max-height для видео
+    function setVideoHeight() {
+        var height = calculateContentHeight(); // Используем ранее определенную функцию
+        var videos = document.querySelectorAll('#video-carousel .video-container video');
+
+        videos.forEach(function(video) {
+            video.style.height = Math.floor(height * scale) + 'px';
+        });
+    }
+
+	function setPhotoHeight() {
+		var height = calculateContentHeight();
+		var photos = document.querySelectorAll('.question-detail-image');
+		photos.forEach(function(photo) {
+			photo.style.height = Math.floor(height * scale) + 'px';
+		});
+	}
+
+    // Вызовите функцию при загрузке страницы и изменении размера окна
+    window.addEventListener('load', function() {
+        setVideoHeight();
+		setPhotoHeight();
+    });
+
+    window.addEventListener('resize', function() {
+        setVideoHeight();
+		setPhotoHeight();
+    });
+</script>
 {% endblock %}

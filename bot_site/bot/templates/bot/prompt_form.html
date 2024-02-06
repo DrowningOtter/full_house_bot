@@ -1,5 +1,6 @@
 {% extends "bot/base_generic.html" %}
 {% load bot_extras %}
+{% load i18n %}
 
 {% block head_addition %}
 {% load static %}
@@ -7,8 +8,6 @@
 {% endblock %}
 
 {% block content %}
-
-
 {% if formset.forms %}
 <div class="form-container">
   <form action="" method="post">
@@ -26,12 +25,12 @@
     </div>
     {% endfor %}
     <div class="button-wrapper">
-      <button type="submit" class="button">Save</button>
+      <button type="submit" class="button">{% translate "Save" %}</button>
     </div>
   </form>
 </div>
 {% else %}
-  <p>There are no prompts :( <br><strong>Please, contact administator.</strong></p>
+  <p>{% translate "There are no prompts."%}<br><strong>{% translate "Please, contact the administator." %}</strong></p>
 {% endif %}
 {% endblock %}
 

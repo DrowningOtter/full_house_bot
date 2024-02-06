@@ -1,4 +1,7 @@
 {% extends "bot/sidebar.html" %}
+
+{% load i18n %}
+
 {% block header %}
   <div class="container">
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
@@ -16,15 +19,15 @@
           <li><a href="{% url 'bot:index' %}"
             {% if request.path == home_url %} class="nav-link px-2 link-secondary"
             {% else %} class="nav-link px-2"
-            {% endif %}>Home</a></li>
+            {% endif %}>{% translate "Home" %}</a></li>
           <li><a href="{% url 'bot:prompts-update' %}"
             {% if request.path == prompts_url %} class="nav-link px-2 link-secondary"
             {% else %} class="nav-link px-2"
-            {% endif %}>Prompts</a></li>
+            {% endif %}>{% translate "Prompts" %}</a></li>
           <li><a href="{% url 'bot:newsletter' %}"
             {% if request.path == newsletter_url %} class="nav-link px-2 link-secondary"
             {% else %} class="nav-link px-2"
-            {% endif %}>Newsletter</a></li>
+            {% endif %}>{% translate "Newsletter" %}</a></li>
           <li><a href="#"
             {% if request.path == about_url %}class="nav-link px-2 link-secondary"
             {% else %} class="nav-link px-2"

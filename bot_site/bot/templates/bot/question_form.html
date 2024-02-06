@@ -1,29 +1,211 @@
 {% extends "bot/base_generic.html" %}
 
+{% load bot_extras %}
+{% load static %}
+{% load i18n %}
+
+{% block head_addition %}
+<link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
+<link rel="stylesheet" href="{% static 'bot/css/style.css' %}">
+{% endblock %}
+
 {% block content %}
-    <h1>{% if object %}Edit Question{% else %}Create Question{% endif %}</h1>
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.non_form_errors }}
-        {{ form.as_p }}
-        <br>
-        <h4>Photos related to this question:</h4>
-        {{ photos.non_form_errors }}
-        {{ photos.management_form }}
-        <ul>
+    <div class="form-container">
+        <h1>{% if object %}{% translate "Edit Question" %}{% else %}{% translate "Create Question" %}{% endif %}</h1>
+
+        <form action="" method="post" enctype="multipart/form-data" id="form-instance">
+            {% csrf_token %}
+            {{ form.non_form_errors }}
+            <div class="form-row">
+                {{form.question_text.label}}:
+                {{form.question_text}}
+            </div>
+            <div class="form-row">
+                {{form.answer_text.label}}:
+                {{form.answer_text}}
+            </div>
+            <div class="form-row">
+                {{form.question_number.label}}:
+                {{form.question_number}}
+            </div>
+            <div class="form-row">
+                {{form.house.label}}: 
+                {{form.house}}
+            </div>
+            <br>
+            <h4>{% translate "Photos related to this question:" %}</h4>
+            {{ photos.non_form_errors }}
+            {{ photos.management_form }}
             {% for photo in photos %}
-                {{ photo.as_p }}
+                <div class="media-form-row photo-row">
+                    {{photo.id}}
+                    {% if photo.instance.photo %}
+                    <a href="{{photo.instance.photo.url}}">{{photo.instance.photo.name}}</a>
+                    <div class="uploaded-media-wrapper">
+
+                        <label for="{{photo.DELETE.id_for_label}}">{% translate "Delete:" %}</label>
+                        <input type="checkbox" name="{{photo.DELETE.html_name}}" id="{{photo.DELETE.id_for_label}}">
+                    </div>
+                    {% else %}
+                    <div class="file-upload-wrapper">
+                        <label class="label-for-file-upload" for="{{photo.photo.id_for_label}}">
+                            {% translate "Choose file" %}
+                        </label>
+                        <span id="{{photo.photo.id_for_label}}-span"></span>
+                        <input type="file" name="{{photo.photo.html_name}}" accept="image/*"
+                            id="{{photo.photo.id_for_label}}" class="file-input-widget">
+                    </div>
+                        
+                    {% endif %}
+                </div>
             {% endfor %}
-        </ul>
-        <h4>Videos related to this question:</h4>
-        {{ videos.non_form_errors }}
-        {{ videos.management_form }}
-        <ul>
+            <button type="button" id="add-photo-form" class="add-media-button">{% translate "Add another photo" %}</button>
+            <!-- {% for photo in photos %}
+                {{photo}}
+            {% endfor %} -->
+            <br><br>
+            <h4>{% translate "Videos related to this question:" %}</h4>
+            {{ videos.non_form_errors }}
+            {{ videos.management_form }}
             {% for video in videos %}
-                {{ video.as_p}}
+                <div class="media-form-row video-row">
+                    {{video.id}}
+                    {% if video.instance.video %}
+                    <a href="{{video.instance.video.url}}">{{video.instance.video.name}}</a>
+                    <div class="uploaded-photo-wrapper">
+
+                        <label for="{{video.DELETE.id_for_label}}">{% translate "Delete:" %}</label>
+                        <input type="checkbox" name="{{video.DELETE.html_name}}" id="{{video.DELETE.id_for_label}}">
+                    </div>
+                    {% else %}
+                    <div class="file-upload-wrapper">
+                        <label class="label-for-file-upload" for="{{video.video.id_for_label}}">
+                            {% translate "Choose file" %}
+                        </label>
+                        <span id="{{video.video.id_for_label}}-span"></span>
+                        <input type="file" name="{{video.video.html_name}}"
+                            id="{{video.video.id_for_label}}" class="file-input-widget" accept="video/*">
+                    </div>
+                        
+                    {% endif %}
+                </div>
             {% endfor %}
-        </ul>
-        <button type="submit">Save</button>
-    </form>
-    <a href="{% url 'bot:questions' %}">Cancel</a>
+            <button type="button" id="add-video-form" class="add-media-button">{% translate "Add another video" %}</button>
+            <div class="button-wrapper">
+                <button type="submit" class="button">{% translate "Save" %}</button>
+                <a href="{% url 'bot:questions' %}" class="button">{% translate "Cancel" %}</a>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% for photo in photos %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            let photoInputElement = document.getElementById('{{photo.photo.id_for_label}}');
+            if (photoInputElement) {
+                photoInputElement.addEventListener('change', function() {
+                    var fileName = '';
+                    fileName = this.value.split('\\').pop(); // Получение только имени файла, без пути
+                    document.getElementById('{{photo.photo.id_for_label}}-span').innerHTML = fileName;
+                });
+            }
+        });
+    </script>
+{% endfor %}
+{% for video in videos %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            let videoInputElement = document.getElementById('{{video.video.id_for_label}}');
+            if (videoInputElement) {
+                videoInputElement.addEventListener('change', function() {
+                    var fileName = '';
+                    fileName = this.value.split('\\').pop(); // Получение только имени файла, без пути
+                    document.getElementById('{{video.video.id_for_label}}-span').innerHTML = fileName;
+                });
+            }
+        });
+    </script>
+{% endfor %}
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		let container = document.querySelector("#form-instance");
+		let addPhotoButton = document.querySelector("#add-photo-form");
+		let totalPhotoForms = document.querySelector('[id="id_photo_set-TOTAL_FORMS"][name="photo_set-TOTAL_FORMS"]');
+		addPhotoButton.addEventListener('click', addPhotoForm);
+		
+		function addPhotoForm(e) {
+			e.preventDefault();
+			let photoForm = document.querySelectorAll(".photo-row");
+			
+			let newPhotoForm = photoForm[photoForm.length - 1].cloneNode(true);
+			let formPhotoRegex = RegExp(`photo_set-(\\d){1}-`,'g');
+			newPhotoForm.innerHTML = newPhotoForm.innerHTML.replace(formPhotoRegex, `photo_set-${photoForm.length}-`);
+			console.log(newPhotoForm);
+			container.insertBefore(newPhotoForm, addPhotoButton);
+			resetPhotoFormValues(newPhotoForm);
+
+			totalPhotoForms.setAttribute('value', `${photoForm.length + 1}`);
+		}
+
+		function resetPhotoFormValues (form) {
+			let fileInputElement = form.querySelector('input[type="file"]');
+			console.log('found: ', fileInputElement);
+			if (fileInputElement) {
+				let spanElement = form.querySelector(`span[id="${fileInputElement.id}-span"]`);
+				console.log('found span element: ', spanElement);
+				if (spanElement) spanElement.innerHTML = "";
+				fileInputElement.addEventListener('change', function () {
+					var fileName = '';
+					fileName = fileInputElement.value.split('\\').pop(); // Получение только имени файла, без пути
+					spanElement.innerHTML = fileName;
+				});
+			} else {
+				console.log('fileInputElement not found');
+			}
+		}
+	});
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		let container = document.querySelector("#form-instance");
+		let addVideoButton = document.querySelector("#add-video-form");
+		let totalVideoForms = document.querySelector('[id="id_video_set-TOTAL_FORMS"][name="video_set-TOTAL_FORMS"]');
+		addVideoButton.addEventListener('click', addVideoForm);
+		
+		function addVideoForm(e) {
+			e.preventDefault();
+			let videoForm = document.querySelectorAll(".video-row");
+			
+			let newVideoForm = videoForm[videoForm.length - 1].cloneNode(true);
+			let formVideoRegex = RegExp(`video_set-(\\d){1}-`,'g');
+			newVideoForm.innerHTML = newVideoForm.innerHTML.replace(formVideoRegex, `video_set-${videoForm.length}-`);
+			console.log(newVideoForm);
+			container.insertBefore(newVideoForm, addVideoButton);
+			resetVideoFormValues(newVideoForm);
+
+			totalVideoForms.setAttribute('value', `${videoForm.length + 1}`);
+		}
+
+		function resetVideoFormValues (form) {
+			let fileInputElement = form.querySelector('input[type="file"]');
+			console.log('found: ', fileInputElement);
+			if (fileInputElement) {
+				let spanElement = form.querySelector(`span[id="${fileInputElement.id}-span"]`);
+				console.log('found span element: ', spanElement);
+				if (spanElement) spanElement.innerHTML = "";
+				fileInputElement.addEventListener('change', function () {
+					var fileName = '';
+					fileName = fileInputElement.value.split('\\').pop(); // Получение только имени файла, без пути
+					spanElement.innerHTML = fileName;
+				});
+			} else {
+				console.log('fileInputElement not found');
+			}
+		}
+	});
+</script>
 {% endblock %}

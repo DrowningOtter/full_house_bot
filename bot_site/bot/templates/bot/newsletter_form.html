@@ -1,5 +1,7 @@
 {% extends "bot/base_generic.html" %}
 
+{% load i18n %}
+
 {% block head_addition %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'bot/css/prompts.css' %}">
@@ -15,8 +17,8 @@
 			{{form.text_field}}
 		</div>
 		<div class="button-wrapper">
-			<button type="submit" class="button">Send</button>
-			<a href="{% url 'bot:index' %}" class="button">Cancel</a>
+			<button type="submit" class="button">{% translate "Send" %}</button>
+			<a href="{% url 'bot:index' %}" class="button">{% translate "Cancel" %}</a>
 		</div>
 	</form>
 </div>

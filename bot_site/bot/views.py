@@ -36,7 +36,7 @@ class HouseAccessMixin(UserPassesTestMixin):
 
 class HouseDetailView(LoginRequiredMixin, HouseAccessMixin, generic.DetailView):
     model = House
-
+    form_class = HouseForm
     def get_queryset(self):
         return House.objects.filter(user=self.request.user)
 
@@ -65,7 +65,17 @@ class QuestionListView(LoginRequiredMixin, generic.ListView):
     model = Question
 
     def get_queryset(self):
-        return Question.objects.filter(user=self.request.user).order_by('question_number')
+        queryset = Question.objects.filter(user=self.request.user).order_by('question_number')
+        house_filter = self.request.GET.get('house_choice')
+        if house_filter:
+            queryset = queryset.filter(house=house_filter)
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        id_list = list(Question.objects.values_list('house', flat=True).distinct())
+        ctx['filter_house_list'] = House.objects.filter(user=self.request.user, pk__in=id_list)
+        return ctx
 
 
 class PhotosListView(LoginRequiredMixin, generic.ListView):
@@ -224,9 +234,9 @@ class QuestionUpdate(LoginRequiredMixin, QuestionAccessMixin, UpdateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         # ctx['photos'] = PhotoFormSet(instance=self.object)
-        ctx['photos'] = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False)(instance=self.object)
+        ctx['photos'] = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False, extra=1)(instance=self.object)
         # ctx['videos'] = VideoFormSet(instance=self.object)
-        ctx['videos'] = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False)(instance=self.object)
+        ctx['videos'] = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False, extra=1)(instance=self.object)
         return ctx
     
     def post(self, requset, *args, **kwargs):
@@ -234,13 +244,13 @@ class QuestionUpdate(LoginRequiredMixin, QuestionAccessMixin, UpdateView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         # photoformset = PhotoFormSet(self.request.POST, self.request.FILES, instance=self.object)
-        photoformset = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False)(
+        photoformset = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False, extra=1)(
             self.request.POST,
             self.request.FILES,
             instance=self.object
         )
         # videoformset = VideoFormSet(self.request.POST, self.request.FILES, instance=self.object)
-        videoformset = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False)(
+        videoformset = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False, extra=1)(
             self.request.POST,
             self.request.FILES,
             instance=self.object

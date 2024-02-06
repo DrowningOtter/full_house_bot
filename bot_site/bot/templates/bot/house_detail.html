@@ -1,53 +1,111 @@
 {% extends "bot/base_generic.html" %}
 
+{% load bot_extras %}
+{% load i18n %}
+
 {% block head_addition %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'bot/css/house_detail.css' %}">
+	<link rel="stylesheet" href="{% static 'bot/css/glide.core.min.css' %}">
+	<link rel="stylesheet" href="{% static 'bot/css/glide.theme.min.css' %}">
+
+	<!-- Подключение скриптов Glide.js и его зависимостей (Popper.js и Splide.js) -->
+	<!-- <script src="https://unpkg.com/splide@2.0.0/dist/js/splide.js"></script> -->
+	<script src="{% static 'bot/js/glide.js' %}"></script>
+	<!-- <script src="{% static 'bot/js/popper.min.js' %}"></script> -->
+
+	<link rel="stylesheet" href="{% static 'bot/css/house_detail.css' %}">
 {% endblock %}
 
 {% block content %}
-<h1>House details</h1>
-{% if house %}
-    <a href="{% url 'bot:house-update' house.pk %}" class="btn">Edit</a>
-    <a href="{% url 'bot:house-delete' house.pk %}" class="btn">Delete</a>
-    <div style="margin-top:20px">
-        <strong>Name:</strong> {{ house.house_name }}<br>
-        <strong>Address:</strong> {{ house.address }}<br>
-        <p><strong>Photos:</strong></p>
-        {% if house.photo_set.all %}
-            {% for image in house.photo_set.all %}
-            <img src="{{ image.photo.url }} " alt="House Photo" class="house-detail-image">
-            {% endfor %}
-        {% else %}
-            <p>There are no added photos.</p>
-        {% endif %}
-        <p><strong>Videos:</strong></p>
-        {% if house.video_set.all %}
-            {% for video in house.video_set.all %}
-                <video width="640" heigth="360" controls>
-                    <source src="{{ video.video.url }}" type="video/mp4">
-                    Your browser doesn't support video tag.
-                </video>
-            {% endfor %}
-        {% else %}
-            <p>There are no videos.</p>
-        {% endif %}
-    </div>
-    <div style="margin-top:20px;">
-        <p><strong>Related questions:</strong></p>
-        {% if house.question_set.all %}
-            <ol>
-            {% for question in house.question_set.all|dictsort:"question_number" %}
-                <li value="{{ question.question_number }}">
-                    <a href="{% url 'bot:question-detail' question.id %}">{{ question.question_text }}</a>
-                </li>
-            {% endfor %}
-            </ol>
-        {% else %}
-            <p>There are no related questions for this house.</p>
-        {% endif %}
-    </div>
-{% else %}
-    <p>There are no houses.</p>
-{% endif %}
+
+<div class="house-card">
+	<h1>{% translate "House details" %}</h1>
+	{% if house.photo_set.all %}
+		<div class="glide-container">
+			<div class="glide">
+				<div class="glide__track" data-glide-el="track">
+					<ul class="glide__slides">
+						{% for photo in house.photo_set.all %}
+						<li class="glide__slide"><img src="{{photo.photo.url}}" alt="" class="house-detail-image"></li>
+						{% endfor %}
+					</ul>
+				</div>
+				<!-- <div class="glide__arrows" data-glide-el="controls">
+					<button class="glide__arrow glide__arrow--left" data-glide-dir="<">{% translate "prev" context "carousel button" %}</button>
+					<button class="glide__arrow glide__arrow--right" data-glide-dir=">">{% translate "next" context "carousel button" %}</button>
+				</div> -->
+				<div class="glide__bullets" data-glide-el="controls[nav]">
+					{% for photo in house.photo_set.all %}
+						<button class="glide__bullet" data-glide-dir="={{forloop.counter0}}"></button>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endif %}
+	<div class="house-card-content">
+		<div class="card-content-row">
+			<label for="">{{house|verbose_name:"house_number"}}:</label>
+			{{house.house_number}}
+		</div>
+		<div class="card-content-row">
+			<label for="">{{house|verbose_name:"house_name"}}: </label>
+			{{ house.house_name }}
+		</div>
+		<div class="card-content-row">
+			<label for="">{{house|verbose_name:"address"}}:</label>
+			{{house.address}}
+	</div>
+	<div class="button-wrapper">
+		<a href="{% url 'bot:house-update' house.pk %}" class="btn">{% translate "Edit" %}</a>
+		<a href="{% url 'bot:house-delete' house.pk %}" class="btn">{% translate "Delete" %}</a>
+	</div>
+</div>
+
+<script>
+	scale = 0.8;
+	new Glide('.glide', {
+	type: 'carousel',
+	startAt: 0,
+	perView: 2,
+	focusAt: 'center',
+	breakpoints: {
+		800: {
+		perView: 1
+		}
+	}
+	}).mount();
+
+	// Функция для определения высоты видимой области экрана
+	function getViewportHeight() {
+		return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+	}
+
+	// Функция для вычисления значения, равного высоте всей страницы минус высота хедера
+	function calculateContentHeight() {
+		var headerHeight = document.querySelector('.header').offsetHeight;
+		var viewportHeight = getViewportHeight();
+		var contentHeight = viewportHeight - headerHeight;
+
+		// Используйте значение contentHeight по вашему усмотрению
+		console.log('Content Height:', contentHeight);
+		return contentHeight;
+	}
+
+	function setPhotoHeight() {
+		var height = calculateContentHeight();
+		var photos = document.querySelectorAll('.house-detail-image');
+		photos.forEach(function(photo) {
+			photo.style.height = Math.floor(height * scale) + 'px';
+		});
+	}
+
+	// Вызовите функцию при загрузке страницы и изменении размера окна
+	window.addEventListener('load', function() {
+		setPhotoHeight();
+	});
+
+	window.addEventListener('resize', function() {
+		setPhotoHeight();
+	});
+</script>
 {% endblock %}

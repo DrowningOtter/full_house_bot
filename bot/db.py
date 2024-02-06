@@ -1,5 +1,5 @@
 import  psycopg2, os
-from conf import DB_NAME, USER_ID, MEDIA_ROOT
+from conf import USER_ID, MEDIA_ROOT
 from main import logging
 
 db_params = {

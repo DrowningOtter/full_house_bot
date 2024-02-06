@@ -1,9 +1,35 @@
 {% extends "bot/base_generic.html" %}
 {% load bot_extras %}
+{% load i18n %}
+
+{% block head_addition %}
+ {% load static %}
+	<link rel="stylesheet" href="{% static 'bot/css/question_list.css' %}">
+{% endblock %}
 
 {% block content %}
-	<h1>Your Questions</h1>
-	<a href="{% url 'bot:question-create' %}" class="btn">Add Question</a>
+	<div class="content-header">
+		<div class="h-buttons">
+			<h1>{% translate "Your Questions" %}</h1>
+			<a href="{% url 'bot:question-create' %}" class="btn">{% translate "Add Question" %}</a>
+		</div>
+		<div class="filters">
+			<h2>{% translate "Filters:" %}</h2>
+			<form action="" method="get" id="filterForm">
+				<label for="">{% translate "House:" %}</label>
+				<select name="house_choice" id="house_choice" class="select-widget">
+					<option value="" {% if not request.GET.house_choice %}selected{% endif %}>{% translate "All" %}</option>
+					{% for house in filter_house_list %}
+					{% with raw_value=request.GET.house_choice %}
+					{% with int_val=raw_value|default:"0"|add:"0" %}
+					<option value="{{ house.pk }}" {% if house.pk == int_val %}selected{% endif %}>{{house}}</option>
+					{% endwith %}
+					{% endwith %}
+					{% endfor %}
+				</select>
+			</form>
+		</div>
+	</div>
 	{% if question_list %}
 		{% for q in question_list %}
 			<div class="question-card">
@@ -26,13 +52,25 @@
 					</div>
 				</div>
 				<div class="question-card-btns">
-					<a href="{% url 'bot:question-update' q.pk %}" class="question-btn">Edit</a>
-					<a href="{% url 'bot:question-delete' q.pk %}" class="question-btn">Delete</a>
-					<a href="{% url 'bot:question-detail' q.pk %}" class="question-btn">Question detail</a>
+					<a href="{% url 'bot:question-update' q.pk %}" class="question-btn">{% translate "Edit" %}</a>
+					<a href="{% url 'bot:question-delete' q.pk %}" class="question-btn">{% translate "Delete" %}</a>
+					<a href="{% url 'bot:question-detail' q.pk %}" class="question-btn">{% translate "Question detail" %}</a>
 				</div>
 			</div>
 		{% endfor %}
 	{% else %}
-		<p>There are no added questions.</p>
+		<p>{% translate "There are no added questions." %}</p>
 	{% endif %}
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var houseChoice = document.getElementById('house_choice');
+
+			houseChoice.addEventListener('change', function() {
+				document.getElementById('filterForm').submit();
+			});
+		});
+	</script>
 {% endblock %}

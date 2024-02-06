@@ -17,9 +17,14 @@
     flex-direction: column;
 }
 
+.form-container h1 {
+    margin-bottom: 2%;
+}
+
 /* Стили для форм-роу внутри формы */
 .form-row {
     display: flex;
+    align-items: center;
     margin-bottom: 20px;
     width: 100%;
 }
@@ -42,6 +47,20 @@
     max-height: none;
 }
 
+.input-widget {
+    display: inline-block;
+    width: 80%;
+    height: fit-content;
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-left: auto;
+    background: transparent;
+    color: #d6d8ef;
+}
+
 .label-widget[readonly] {
     display: inline-block;
     padding: 8px;
@@ -62,7 +81,7 @@
 .button {
     /* background-color: #24a2ec; */
     background-color: rgba(36, 162, 236, 0.4);
-    width: 30%;
+    width: 35%;
     color: #fff;
     padding: 10px 15px;
     border: none;
@@ -72,23 +91,26 @@
     align-self: center;
     text-decoration: none;
     text-align: center;
+    min-width: 120px;
 }
   
 .button:hover {
     background-color: #817bf7;
-    transform: scale(1.1);
-    transition: 0.3s ease;
+    /* transform: scale(1.1);
+    transition: 0.3s ease; */
 }
 
 .button-wrapper {
     align-items: center;
     display: flex;
     justify-content: space-evenly;
+    margin-top: 2%;
 }
 
 @media(max-width: 1200px) {
     .form-row {
       flex-direction: column;
+      align-items: flex-start;
     }
     .textarea-widget {
         margin-left: 0;
@@ -96,6 +118,15 @@
     }
     .label-widget[readonly] {
         width: 100%;
+    }
+    .input-widget {
+        width: 100%;
+    }
+    .button-wrapper {
+        flex-direction: column;
+    }
+    .button {
+        margin-bottom: 3%;
     }
   }
   

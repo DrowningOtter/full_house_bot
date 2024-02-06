@@ -2,12 +2,13 @@ from typing import Any
 from django.contrib import admin
 from django.http.request import HttpRequest
 
-from .models import Photo, Video, House, Question, Prompt, AccessInfo, RegisteredUsers
+from .models import Photo, Video, House, Question, Prompt, RegisteredUser
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from bot_management.conf import initial_prompt_names
+from bot_management.conf import initial_prompts
 from django.forms import BaseInlineFormSet
 from .forms import PromptFormAdmin
+from django.utils.translation import gettext_lazy as _
 
 class PhotoInline(admin.TabularInline):
     model = Photo
@@ -18,8 +19,8 @@ class VideoInline(admin.TabularInline):
     model = Video
     extra = 1
 
-class RegisteredUsersInline(admin.TabularInline):
-    model = RegisteredUsers
+class RegisteredUserInline(admin.TabularInline):
+    model = RegisteredUser
     extra = 0
 
 class PromptFormSet(BaseInlineFormSet):
@@ -28,18 +29,17 @@ class PromptFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.instance.pk:
-            self.initial = [{'prompt_name': prompt_name, 'prompt': '', 'helper_text': '',} for prompt_name in initial_prompt_names]
+            self.initial = initial_prompts
 
 
 class PromptInline(admin.TabularInline):
     model = Prompt
     formset = PromptFormSet
-    # min_num = len(initial_prompt_names)
     form = PromptFormAdmin
     def get_extra(self, request: HttpRequest, obj: Any | None = ..., **kwargs: Any) -> int:
         extra = 0
         if not obj:
-            extra = len(initial_prompt_names)
+            extra = len(initial_prompts)
         return extra
 
 
@@ -64,18 +64,26 @@ class PhotoAdmin(admin.ModelAdmin):
 
 
 class PromptAdmin(admin.ModelAdmin):
-    list_display = ['id', 'prompt_name', 'prompt', 'user_id']
+    list_display = ['id', 'prompt_name', 'prompt', 'helper_text', 'user']
+    list_filter = ['user__username']
+    search_fields = ['user__username']
 
 
 class CustomUserAdmin(UserAdmin):
     list_display = ['id', 'username', 'first_name', 'last_name', 'is_staff']
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser')}),
     )
     readonly_fields = ()
-    inlines = [RegisteredUsersInline, PromptInline]
+    inlines = [RegisteredUserInline, PromptInline]
+
+
+class RegisteredUserAdmin(admin.ModelAdmin):
+    list_display = ['user', 'tg_user_id']
+    list_filter = ['user']
+
 
 
 admin.site.unregister(User)
@@ -86,5 +94,4 @@ admin.site.register(Video)
 admin.site.register(House, HouseAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Prompt, PromptAdmin)
-admin.site.register(AccessInfo)
-admin.site.register(RegisteredUsers)
+admin.site.register(RegisteredUser, RegisteredUserAdmin)
