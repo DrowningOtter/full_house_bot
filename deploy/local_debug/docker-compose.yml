@@ -14,24 +14,24 @@ networks:
 services:
   admin:
     build: 
-      context: ../..
-      dockerfile: bot_site/Dockerfile
+      context: ../../bot_site
+      dockerfile: Dockerfile
     expose:
       - 8000
     ports:
       - 8000:8000
-    command:  bash bot_site/run.sh
+    command:  bash run.sh
     networks:
       - botnet
     depends_on:
       - postgres
-      - rabbit
+      # - rabbit
 
   bot:
     build:
-      context: ../..
-      dockerfile: bot/Dockerfile
-    command: python bot/main.py
+      context: ../../bot
+      dockerfile: Dockerfile
+    command: python main.py
     networks:
       - botnet
 
