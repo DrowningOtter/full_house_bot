@@ -137,6 +137,9 @@
 		let container = document.querySelector("#form-instance");
 		let addPhotoButton = document.querySelector("#add-photo-form");
 		let totalPhotoForms = document.querySelector('[id="id_photo_set-TOTAL_FORMS"][name="photo_set-TOTAL_FORMS"]');
+        if (totalPhotoForms == null) {
+            return;
+        }
 		addPhotoButton.addEventListener('click', addPhotoForm);
 		
 		function addPhotoForm(e) {

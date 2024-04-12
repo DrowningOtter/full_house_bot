@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.db import connection as db_connection
 from django.http import HttpResponseServerError
 
+
 from .models import House, Question, Photo, Video, Prompt
 from .forms import (PhotoForm, HouseForm, QuestionForm, 
                     VideoForm, create_custom_formset, 
@@ -184,13 +185,23 @@ class QuestionCreate(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['photos'] = PhotoFormSet(queryset=Photo.objects.none()) if 'photos' not in kwargs else kwargs['photos']
-        ctx['videos'] = VideoFormSet(queryset=Video.objects.none()) if 'videos' not in kwargs else kwargs['videos']
+        # ctx['photos'] = PhotoFormSet(queryset=Photo.objects.none()) if 'photos' not in kwargs else kwargs['photos']
+        # ctx['videos'] = VideoFormSet(queryset=Video.objects.none()) if 'videos' not in kwargs else kwargs['videos']
+        ctx['photos'] = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False, extra=1)()
+        ctx['videos'] = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False, extra=1)()
         return ctx
     
-    def post(self, request, *args, **kwargs):   
-        photoformset = PhotoFormSet(self.request.POST, self.request.FILES, queryset=Photo.objects.none())
-        videoformset = VideoFormSet(self.request.POST, self.request.FILES, queryset=Video.objects.none())
+    def post(self, request, *args, **kwargs):
+        # photoformset = PhotoFormSet(self.request.POST, self.request.FILES)
+        photoformset = inlineformset_factory(Question, Photo, form=PhotoForm, fields=['photo'], can_delete_extra=False, extra=1)(
+            self.request.POST, 
+            self.request.FILES
+            )
+        # videoformset = VideoFormSet(self.request.POST, self.request.FILES)
+        videoformset = inlineformset_factory(Question, Video, form=VideoForm, fields=['video'], can_delete_extra=False, extra=1)(
+            self.request.POST, 
+            self.request.FILES
+            )
         self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
