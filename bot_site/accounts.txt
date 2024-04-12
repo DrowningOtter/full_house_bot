@@ -1,8 +1,2 @@
-username: danil
-password: nHknJktj
-
-username: testuser
-password: umK3AiNI
-
-username: jgknbwpg
-password: nyzcim-gIrqy5-timqoq
+username: artem
+password: X7z8tkSnKC3kTg3

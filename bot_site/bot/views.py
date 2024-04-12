@@ -352,7 +352,7 @@ def send_newsletter(request):
             text_value = form.cleaned_data['text_field']
             print('DEBUG\n', text_value)
             with db_connection.cursor() as cursor:
-                cursor.execute(f"""SELECT tg_user_id FROM bot_registeredusers WHERE user_id = {request.user.id}""")
+                cursor.execute(f"""SELECT tg_user_id FROM bot_registereduser WHERE user_id = {request.user.id}""")
                 user_list = [item[0] for item in cursor.fetchall()]
             # отправить сообщение в тг
             connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST_NAME}/"))

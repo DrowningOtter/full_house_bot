@@ -19,7 +19,7 @@ async def reg_user(reg_id):
     #                """, (USER_ID, reg_id, USER_ID, reg_id))
     try:
         cursor.execute("""
-                        INSERT INTO bot_registeredusers (user_id, tg_user_id)
+                        INSERT INTO bot_registereduser (user_id, tg_user_id)
                         VALUES (%s, %s)
                         ON CONFLICT DO NOTHING;
                         """, (USER_ID, reg_id))
@@ -111,6 +111,7 @@ async def get_questions_list(house_number):
                     SELECT question_number, question_text
                     FROM bot_question
                     WHERE user_id = {USER_ID} AND house_id = (SELECT id FROM bot_house WHERE house_number = {house_number})
+                    ORDER BY question_number
                     ''')
     questions = cursor.fetchall()
     if questions == []:

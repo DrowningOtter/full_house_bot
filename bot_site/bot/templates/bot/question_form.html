@@ -19,18 +19,22 @@
             <div class="form-row">
                 {{form.question_text.label}}:
                 {{form.question_text}}
+                {{form.question_text.errors}}
             </div>
             <div class="form-row">
                 {{form.answer_text.label}}:
                 {{form.answer_text}}
+                {{form.answer_text.errors}}
             </div>
             <div class="form-row">
                 {{form.question_number.label}}:
                 {{form.question_number}}
+                {{form.question_number.errors}}
             </div>
             <div class="form-row">
                 {{form.house.label}}: 
                 {{form.house}}
+                {{form.house.errors}}
             </div>
             <br>
             <h4>{% translate "Photos related to this question:" %}</h4>
@@ -42,7 +46,6 @@
                     {% if photo.instance.photo %}
                     <a href="{{photo.instance.photo.url}}">{{photo.instance.photo.name}}</a>
                     <div class="uploaded-media-wrapper">
-
                         <label for="{{photo.DELETE.id_for_label}}">{% translate "Delete:" %}</label>
                         <input type="checkbox" name="{{photo.DELETE.html_name}}" id="{{photo.DELETE.id_for_label}}">
                     </div>

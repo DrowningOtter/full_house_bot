@@ -183,15 +183,20 @@ async def echo_handler(message: types.Message, state: FSMContext) -> None:
 
         house_number = (await state.get_data())['selected_house_number']
         q_no = int(message.text)
+        # logging.info(f"ques num: {q_no}\nques list: {await db.get_questions_numbers(house_number)}")
         if q_no not in await db.get_questions_numbers(house_number):
+            # logging.info("question number not in ques list")
             raise ValueError
-        media_group = MediaGroupBuilder(caption=await db.get_answer_text(house_number, q_no))
+        media_group_list = []
         photos_list = await db.get_question_photos(house_number, q_no)
         videos_list = await db.get_question_videos(house_number, q_no)
-        for photo in photos_list:
-            media_group.add_photo(media=FSInputFile(photo))
-        for video in videos_list:
-            media_group.add_video(media=FSInputFile(video))
+        for i in range((len(photos_list) + len(videos_list)) // 10):
+            media_group_list.append(MediaGroupBuilder())
+        media_group_list.append(MediaGroupBuilder(caption=await db.get_answer_text(house_number, q_no)))
+        for ind, photo in enumerate(photos_list):
+            media_group_list[ind // 10].add_photo(media=FSInputFile(photo))
+        for ind, video in enumerate(videos_list):
+            media_group_list[ind // 10].add_video(media=FSInputFile(video))
         # Исключений нет - нужно удалить сообщение об ошибке
         if "error_message_id" in state_data:
             await bot.delete_message(chat_id=message.chat.id, message_id=state_data.pop("error_message_id"))
@@ -200,11 +205,13 @@ async def echo_handler(message: types.Message, state: FSMContext) -> None:
         if photos_list == [] and videos_list == []:
             await bot.send_message(chat_id=message.chat.id, text=await db.get_answer_text(house_number, q_no))
         else:
-            await bot.send_media_group(chat_id=message.chat.id, media=media_group.build())
+            for group in media_group_list:
+                await bot.send_media_group(chat_id=message.chat.id, media=group.build())
         await bot.delete_message(chat_id=message.chat.id, message_id=sended_message.message_id)
         await echo_handler.timer_task
         await timer_callback(message, state)
     except (KeyError, ValueError) as ex:
+        # logging.info(str(ex))
         text = await db.get_prompt("incorrect_question_number")
         if "error_message_id" not in state_data:
             sended_message = await bot.send_message(chat_id=message.chat.id, text=await db.get_prompt("incorrect_question_number"))

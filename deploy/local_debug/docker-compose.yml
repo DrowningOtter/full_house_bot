@@ -17,23 +17,28 @@ services:
       context: ../../bot_site
       dockerfile: Dockerfile
     expose:
-      - 8000
+      - 9000
     ports:
-      - 8000:8000
+      - 9000:8000
     command:  bash run.sh
     networks:
       - botnet
     depends_on:
       - postgres
-      # - rabbit
+      - rabbit
+    volumes:
+      - ../../bot_site/media/:/app/media/
 
   bot:
     build:
       context: ../../bot
       dockerfile: Dockerfile
     command: python main.py
+    # command: /bin/bash -c "while true; do echo 'admin alive'; sleep 240; done"
     networks:
       - botnet
+    volumes:
+      - ../../bot_site/media/:/media/
 
   rabbit:
     image: rabbitmq:3.10.7-management

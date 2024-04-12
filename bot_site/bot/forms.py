@@ -63,8 +63,14 @@ class QuestionForm(forms.ModelForm):
         model = Question
         fields = ['question_text', 'answer_text', 'house', 'question_number']
         widgets = {
-            'question_text': forms.Textarea(attrs={'class': 'textarea-widget'}),
-            'answer_text': forms.Textarea(attrs={'class': 'textarea-widget'}),
+            'question_text': forms.Textarea(attrs={
+                'class': 'textarea-widget',
+                'oninput': 'autoResize(this)'
+                }),
+            'answer_text': forms.Textarea(attrs={
+                'class': 'textarea-widget',
+                'oninput': 'autoResize(this)'
+                }),
             'question_number': forms.TextInput(attrs={'class': 'input-widget'}),
             'house': forms.Select(attrs={'class': 'select-widget'}),
         }
