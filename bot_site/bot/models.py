@@ -98,7 +98,7 @@ class Question(models.Model):
     question_number = models.PositiveIntegerField(verbose_name=_('question number'))
     question_text = models.TextField(verbose_name=_('question text'), max_length=200)
     answer_text = models.TextField(verbose_name=_('answer text'), max_length=2000)
-    house = models.ForeignKey(House, on_delete=models.CASCADE)
+    house = models.ForeignKey(House, verbose_name=_('house'), on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.question_text}"
@@ -107,9 +107,9 @@ class Question(models.Model):
         return reverse('bot:question-detail', args=[str(self.id)])
 
     class Meta:
+        unique_together = ("question_number", "house")
         verbose_name = _("question")
         verbose_name_plural = _("questions")
-        unique_together = ("question_number", "house")
 
 
 class Prompt(models.Model):

@@ -5,6 +5,7 @@ from os import getenv
 import json
 from aio_pika import connect, Message
 from aiormq.exceptions import ChannelNotFoundEntity, ChannelInvalidStateError
+from datetime import datetime, timedelta
 
 from aiogram import Bot, Dispatcher, Router, types, F
 from aiogram.enums import ParseMode
@@ -76,7 +77,7 @@ async def send_terms_of_use(message: Message, state: FSMContext):
     data = await state.get_data()
     if "sended_message_id" not in data:
         sended_message = await bot.send_message(chat_id=message.chat.id, text="Пожалуйста, нажмите на кнопку для получения списка правил")
-        await state.update_data(sended_message_id=sended_message.message_id)
+        await state.update_data(sended_message_id=sended_message.message_id, sended_message_id_timestamp=datetime.now())
     await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
 @dp.callback_query(lambda query: query.data == "terms_of_use")
@@ -88,11 +89,13 @@ async def terms_of_use_handler(query: types.CallbackQuery, state: FSMContext):
     # await bot.edit_message_text(chat_id=query.message.chat.id,
     #                             message_id=query.message.message_id, text=query.message.text+"\n"+await db.get_prompt("rules")+message_templates.about_commands)
     await bot.send_message(chat_id=query.message.chat.id, text=await db.get_prompt("rules")+message_templates.about_commands)
-    if "sended_message_id" in data:
+    if "sended_message_id" in data and datetime.now() - data["sended_message_id_timestamp"] < timedelta(hours=48):
         await bot.delete_message(chat_id=query.message.chat.id, message_id=data.pop("sended_message_id"))
+    data.pop("sended_message_id_timestamp", None)
 
     sended_message = await bot.send_message(chat_id=query.message.chat.id, text=await db.get_house_list()+"\n\n"+await db.get_prompt("house_choose_text"))
     data['house_select_message_id'] = sended_message.message_id
+    data['house_select_message_id_timestamp'] = datetime.now()
     await state.set_data(data)
     await state.set_state(Form.house_choice)
     # await bot.pin_chat_message(chat_id=query.message.chat.id, message_id=query.message.message_id)
@@ -105,8 +108,9 @@ async def process_house_choice(message: Message, state: FSMContext):
         assert house_number in numbers_list
         # Correct house number, proceess
         data = await state.get_data()
-        if "incorrect_house_number_message_id" in data:
+        if "incorrect_house_number_message_id" in data and datetime.now() - data['incorrect_house_number_message_id_timestamp'] < timedelta(hours=48):
             await bot.delete_message(chat_id=message.chat.id, message_id=data.pop("incorrect_house_number_message_id"))
+        data.pop("incorrect_house_number_message_id_timestamp", None)
         await state.set_state(Form.house_choosen)
         # Добавить фотки и видео дома, текстовый ответ и отправить
         media_group = MediaGroupBuilder(caption=await db.get_house_info(house_number))
@@ -123,13 +127,15 @@ async def process_house_choice(message: Message, state: FSMContext):
 
         data['selected_house_number'] = house_number
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
-        await bot.delete_message(chat_id=message.chat.id, message_id=data.pop('house_select_message_id'))
+        if datetime.now() - data['house_select_message_id_timestamp'] < timedelta(hours=48):
+            await bot.delete_message(chat_id=message.chat.id, message_id=data.pop('house_select_message_id'))
+        data.pop('house_select_message_id_timestamp', None)
         await state.set_data(data)
         await state.set_state(Form.house_choosen)
     except (AssertionError, ValueError) as ex:
         if "incorrect_house_number_message_id" not in await state.get_data():
             sended_message = await bot.send_message(chat_id=message.chat.id, text=await db.get_prompt("incorrect_house_number"))
-            await state.update_data(incorrect_house_number_message_id=sended_message.message_id)
+            await state.update_data(incorrect_house_number_message_id=sended_message.message_id, incorrect_house_number_message_id_timestamp=datetime.now())
         await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
 
@@ -140,12 +146,14 @@ async def timer_callback(message: types.Message, state: FSMContext):
             InlineKeyboardButton(text="Нет", callback_data="no_more_questions")
         ]]
     ))
-    await state.update_data(ask_for_more_questions_message_id=sended_message.message_id)
+    await state.update_data(ask_for_more_questions_message_id=sended_message.message_id, ask_for_more_questions_message_id_timestamp=datetime.now())
 
 @dp.callback_query(lambda query: query.data in ["no_more_questions", "more_questions"])
 async def no_more_questions(query: types.CallbackQuery, state: FSMContext):
     state_data = await state.get_data()
-    await bot.delete_message(chat_id=query.message.chat.id, message_id=state_data.pop("ask_for_more_questions_message_id"))
+    if datetime.now() - state_data["ask_for_more_questions_message_id_timestamp"] < timedelta(hours=48):
+        await bot.delete_message(chat_id=query.message.chat.id, message_id=state_data.pop("ask_for_more_questions_message_id"))
+    state_data.pop("ask_for_more_questions_message_id_timestamp", None)
     sended_message = await bot.send_message(
         chat_id=query.message.chat.id,
         text=await db.get_prompt("answer_to_no_more_questions") \
@@ -153,8 +161,10 @@ async def no_more_questions(query: types.CallbackQuery, state: FSMContext):
         )
     if query.data == "more_questions":
         state_data["ask_to_more_questions_message_id"] = sended_message.message_id
+        state_data["ask_to_more_questions_message_id_timestamp"] = datetime.now()
     elif query.data == "no_more_questions":
         state_data["wish_nice_rest_message_id"] = sended_message.message_id
+        state_data["wish_nice_rest_message_id_timestamp"] = datetime.now()
     await state.set_data(state_data)
 
 @dp.message(Form.house_choosen)
@@ -173,12 +183,15 @@ async def echo_handler(message: types.Message, state: FSMContext) -> None:
     state_data = await state.get_data()
     # Получить номер вопроса и отправить ответ
     try:
-        if "ask_for_more_questions_message_id" in state_data:
+        if "ask_for_more_questions_message_id" in state_data and datetime.now() - state_data["ask_for_more_questions_message_id_timestamp"] < timedelta(hours=48):
             await bot.delete_message(chat_id=message.chat.id, message_id=state_data.pop("ask_for_more_questions_message_id"))
-        if "ask_to_more_questions_message_id" in state_data:
+            state_data.pop("ask_for_more_questions_message_id_timestamp", None)
+        if "ask_to_more_questions_message_id" in state_data and datetime.now() - state_data["ask_to_more_questions_message_id_timestamp"] < timedelta(hours=48):
             await bot.delete_message(chat_id=message.chat.id, message_id=state_data.pop("ask_to_more_questions_message_id"))
-        if "wish_nice_rest_message_id" in state_data:
+            state_data.pop("ask_to_more_questions_message_id_timestamp", None)
+        if "wish_nice_rest_message_id" in state_data and datetime.now() - state_data["wish_nice_rest_message_id_timestamp"] < timedelta(hours=48):
             await bot.delete_message(chat_id=message.chat.id, message_id=state_data.pop("wish_nice_rest_message_id"))
+            state_data.pop("wish_nice_rest_message_id_timestamp", None)
         await state.set_data(state_data)
 
         house_number = (await state.get_data())['selected_house_number']
@@ -198,8 +211,9 @@ async def echo_handler(message: types.Message, state: FSMContext) -> None:
         for ind, video in enumerate(videos_list):
             media_group_list[ind // 10].add_video(media=FSInputFile(video))
         # Исключений нет - нужно удалить сообщение об ошибке
-        if "error_message_id" in state_data:
+        if "error_message_id" in state_data and datetime.now() - state_data["error_message_id_timestamp"] < timedelta(hours=48):
             await bot.delete_message(chat_id=message.chat.id, message_id=state_data.pop("error_message_id"))
+            state_data.pop("error_message_id_timestamp", None)
             await state.set_data(state_data)
         sended_message = await bot.send_message(chat_id=message.chat.id, text="Пожалуйста, подождите, медиа материалы загружаются...")
         if photos_list == [] and videos_list == []:
@@ -215,7 +229,7 @@ async def echo_handler(message: types.Message, state: FSMContext) -> None:
         text = await db.get_prompt("incorrect_question_number")
         if "error_message_id" not in state_data:
             sended_message = await bot.send_message(chat_id=message.chat.id, text=await db.get_prompt("incorrect_question_number"))
-            await state.update_data(error_message_id=sended_message.message_id)
+            await state.update_data(error_message_id=sended_message.message_id, error_message_id_timestamp=datetime.now())
             await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         else:
             await bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)

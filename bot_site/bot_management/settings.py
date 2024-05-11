@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hh3kjf0k2ft15%$!%=)_l7(ipv1$o2cv%p2pfs2^0*^cx@==h6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["127.0.0.1", "88.218.61.40"]
 
@@ -118,6 +118,10 @@ USE_I18N = True
 LANGUAGES = [
     ("en", _("English")),
     ("ru", _("Russian")),
+]
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'bot', 'locale'),
 ]
 
 USE_TZ = True

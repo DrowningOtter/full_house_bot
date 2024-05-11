@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-06 09:20+0000\n"
+"POT-Creation-Date: 2024-05-11 12:00+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,25 +20,29 @@ msgstr ""
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
 "(n%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: bot/admin.py:77
+#: bot/admin.py:76
 msgid "Personal info"
 msgstr "Персональные данные"
 
-#: bot/admin.py:78
+#: bot/admin.py:77
 #, fuzzy
 #| msgid "questions"
 msgid "Permissions"
 msgstr "вопросы"
 
+#: bot/forms.py:118
+msgid "Newsletter text"
+msgstr "Рассылка"
+
 #: bot/models.py:17
 msgid "photo owner"
 msgstr "владелец фото"
 
-#: bot/models.py:19 bot/models.py:92
+#: bot/models.py:19 bot/models.py:92 bot/models.py:101
 msgid "house"
 msgstr "дом"
 
-#: bot/models.py:20 bot/models.py:61 bot/models.py:110
+#: bot/models.py:20 bot/models.py:61 bot/models.py:111
 msgid "question"
 msgstr "вопрос"
 
@@ -90,35 +94,35 @@ msgstr "текст вопроса"
 msgid "answer text"
 msgstr "текст ответа"
 
-#: bot/models.py:111
+#: bot/models.py:112
 msgid "questions"
 msgstr "вопросы"
 
-#: bot/models.py:116
+#: bot/models.py:117
 msgid "prompt name"
 msgstr "имя сообщения"
 
-#: bot/models.py:117
+#: bot/models.py:118
 msgid "prompt text"
 msgstr "текст сообщения"
 
-#: bot/models.py:118
+#: bot/models.py:119
 msgid "prompt helper text"
 msgstr "подсказка для текста сообщения"
 
-#: bot/models.py:124
+#: bot/models.py:125
 msgid "сообщение"
 msgstr "сообщение"
 
-#: bot/models.py:125
+#: bot/models.py:126
 msgid "сообщения"
 msgstr "сообщения"
 
-#: bot/models.py:134
+#: bot/models.py:135
 msgid "registered user"
 msgstr "зарегистрированный тг пользователь"
 
-#: bot/models.py:135
+#: bot/models.py:136
 msgid "registered users"
 msgstr "зарегестрированные тг пользователи"
 
@@ -177,7 +181,7 @@ msgstr "Да, удалить."
 #: bot/templates/bot/house_confirm_delete.html:23
 #: bot/templates/bot/newsletter_form.html:21
 #: bot/templates/bot/question_confirm_delete.html:23
-#: bot/templates/bot/question_form.html:96
+#: bot/templates/bot/question_form.html:99
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -223,22 +227,22 @@ msgstr "Создать дом"
 msgid "Photos related to this house:"
 msgstr "Фото, связанные с этим домом:"
 
-#: bot/templates/bot/house_form.html:36 bot/templates/bot/question_form.html:46
-#: bot/templates/bot/question_form.html:77
+#: bot/templates/bot/house_form.html:36 bot/templates/bot/question_form.html:49
+#: bot/templates/bot/question_form.html:80
 msgid "Delete:"
 msgstr "Удалить:"
 
-#: bot/templates/bot/house_form.html:42 bot/templates/bot/question_form.html:52
-#: bot/templates/bot/question_form.html:83
+#: bot/templates/bot/house_form.html:42 bot/templates/bot/question_form.html:55
+#: bot/templates/bot/question_form.html:86
 msgid "Choose file"
 msgstr "Выберите файл"
 
-#: bot/templates/bot/house_form.html:52 bot/templates/bot/question_form.html:62
+#: bot/templates/bot/house_form.html:52 bot/templates/bot/question_form.html:65
 msgid "Add another photo"
 msgstr "Добавить фото"
 
 #: bot/templates/bot/house_form.html:53 bot/templates/bot/prompt_form.html:28
-#: bot/templates/bot/question_form.html:95
+#: bot/templates/bot/question_form.html:98
 msgid "Save"
 msgstr "Сохранить"
 
@@ -253,6 +257,14 @@ msgstr "Добавить дом"
 #: bot/templates/bot/house_list.html:46
 msgid "There are no added houses."
 msgstr "Нет добавленных домов."
+
+#: bot/templates/bot/index.html:6
+msgid "Welcome"
+msgstr "Добро пожаловать"
+
+#: bot/templates/bot/index.html:7
+msgid "Glad to see you there"
+msgstr "Рады приветствовать вас"
 
 #: bot/templates/bot/newsletter_form.html:20
 msgid "Send"
@@ -287,15 +299,15 @@ msgstr "Редактировать вопрос"
 msgid "Create Question"
 msgstr "Создать вопрос"
 
-#: bot/templates/bot/question_form.html:36
+#: bot/templates/bot/question_form.html:40
 msgid "Photos related to this question:"
 msgstr "Фото, относящиеся к этому вопросу:"
 
-#: bot/templates/bot/question_form.html:67
+#: bot/templates/bot/question_form.html:70
 msgid "Videos related to this question:"
 msgstr "Видео, относящиеся к этому вопросу:"
 
-#: bot/templates/bot/question_form.html:93
+#: bot/templates/bot/question_form.html:96
 msgid "Add another video"
 msgstr "Добавить видео"
 
@@ -318,6 +330,10 @@ msgstr "Дом:"
 #: bot/templates/bot/question_list.html:21
 msgid "All"
 msgstr "Все"
+
+#: bot/templates/bot/question_list.html:50
+msgid "Related house"
+msgstr "Для дома"
 
 #: bot/templates/bot/question_list.html:57
 msgid "Question detail"

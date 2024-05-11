@@ -2,6 +2,7 @@ from django import forms
 from django.forms import BaseInlineFormSet, inlineformset_factory, modelformset_factory, BaseModelFormSet
 from .models import House, Photo, Question, Video, Prompt
 from django.utils.safestring import SafeString
+from django.utils.translation import gettext_lazy as _
 
 class PhotoForm(forms.ModelForm):
     class Meta:
@@ -114,7 +115,7 @@ PromptFormSet = modelformset_factory(Prompt, form=PromptForm, formset=BasePrompt
 
 class NewsletterForm(forms.Form):
     text_field = forms.CharField(
-        label="Newsletter text",
+        label=_("Newsletter text"),
         widget=forms.Textarea(attrs={
             'class': 'textarea-widget',
             'oninput': 'autoResize(this)',            

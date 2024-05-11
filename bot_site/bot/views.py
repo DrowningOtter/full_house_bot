@@ -3,7 +3,7 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.forms import inlineformset_factory, modelformset_factory
 from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 from django.views import generic
@@ -393,6 +393,15 @@ def send_newsletter(request):
 from bot_management.conf import (RABBITMQ_LOGIN, RABBITMQ_PASSWORD,
                                  RABBITMQ_QUEUE_NAME, RABBITMQ_HOST_NAME,
                                  RABBITMQ_CONNECT_RETRIES, DELAY_BETWEEN_RETRIES)
+
+def staff_required(view_func):
+    actual_decorator = user_passes_test(
+        lambda u: u.is_staff,
+        login_url=reverse_lazy("bot:index"),  # URL для перенаправления, если пользователь не является персоналом
+    )
+    return actual_decorator(view_func)
+
+@staff_required
 def create_queue(request):
     # usage: /create_queue?id=value
     for attempt_number in range(1, RABBITMQ_CONNECT_RETRIES + 1):
