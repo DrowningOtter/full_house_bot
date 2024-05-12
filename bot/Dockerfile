@@ -6,4 +6,6 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
+VOLUME /media
+
 CMD [ "python", "main.py" ]

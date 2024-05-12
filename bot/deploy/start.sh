@@ -15,6 +15,9 @@ while getopts "db" opt; do
         b)
             option_b=true
             ;;
+        s)
+            option_start=true
+            ;;
         \?)
             echo incorrect option
             exit 1
@@ -36,4 +39,8 @@ if [[ "$option_d" = true ]]; then
 fi
 
 # docker compose up bot $args --no-recreate
-docker run --network local_debug_botnet -e TGBOT_API_TOKEN=$TGBOT_API_TOKEN -e USER_ID=$USER_ID --name bot_$USER_ID $args tgbot_image
+command=run
+if [[ "$option_start" = true ]]; then
+    command=start
+fi
+docker $command --network local_debug_botnet -e TGBOT_API_TOKEN=$TGBOT_API_TOKEN -e USER_ID=$USER_ID --name bot_$USER_ID $args -v ./../../bot_site/media:/media tgbot_image
