@@ -23,7 +23,6 @@ services:
       - local_debug_botnet
     volumes:
       - ../../bot_site/media/:/media/
-    restart: always
     environment:
       TGBOT_API_TOKEN: $TGBOT_API_TOKEN
       USER_ID: $USER_ID

@@ -26,6 +26,7 @@ from filters import MyFilter
 from states import Form
 import message_templates
 import db
+import signal
 
 # Bot token can be obtained via https://t.me/BotFather
 TOKEN = API_TOKEN
@@ -253,7 +254,7 @@ async def newsletter_update_handler():
             logging.error(ex)
             logging.info(f"Failed to connect to RabbitMQ. Retrying...(attempt number {attempt_number})")
     else:
-        logging.error("Failed to connect... Exiting")
+        logging.error("Failed to connect... Exiting task")
         return
     
     channel = await connection.channel()
@@ -282,12 +283,23 @@ async def newsletter_update_handler():
                 await send_newsletter(json_data["newsletter_text"], json_data["user_list"])
     await connection.close()
 
+def register_got_queue_handler():
+    loop = asyncio.get_event_loop()
+
+    async def try_to_connect(sig) -> None:
+        logging.info(f"got signal{sig}")
+        await newsletter_update_handler()
+
+    for sig in [signal.SIGUSR1]:
+        loop.add_signal_handler(sig, lambda: asyncio.create_task(try_to_connect(sig)))
+
 
 async def main() -> None:
     # And the run events dispatching
     # await newsletter_update_handler()
     task_one = asyncio.create_task(dp.start_polling(bot))
     task_two = asyncio.create_task(newsletter_update_handler())
+    register_got_queue_handler()
     await asyncio.gather(task_one, task_two)
     # await dp.start_polling(bot)
 
