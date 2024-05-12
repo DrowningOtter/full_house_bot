@@ -1,0 +1,41 @@
+version: '2.4'
+
+# volumes:
+#   rmqdata:
+#     external: false
+#   pgdata:
+#     external: true
+      
+
+networks:
+  local_debug_botnet:
+    external: true
+
+services:
+  bot:
+    container_name: bot_$USER_ID
+    build:
+      context: ../.
+      dockerfile: Dockerfile
+    command: python main.py
+    # command: /bin/bash -c "while true; do echo 'admin alive'; sleep 240; done"
+    networks:
+      - local_debug_botnet
+    volumes:
+      - ../../bot_site/media/:/media/
+    restart: always
+    environment:
+      TGBOT_API_TOKEN: $TGBOT_API_TOKEN
+      USER_ID: $USER_ID
+
+  premake_queues:
+    build: 
+      context: ../.
+      dockerfile: Dockerfile
+    command: python init_queues.py
+    networks:
+      - local_debug_botnet
+    restart: on-failure:3
+    environment:
+      TGBOT_API_TOKEN: $TGBOT_API_TOKEN
+      USER_ID: $USER_ID

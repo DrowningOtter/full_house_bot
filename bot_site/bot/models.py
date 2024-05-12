@@ -44,7 +44,7 @@ def create_rabbitmq_queue(sender, instance, created, **kwargs):
             return
         channel = connection.channel()
         queue_name = RABBITMQ_QUEUE_NAME + str(instance.id)
-        queue = channel.queue_declare(queue_name)
+        queue = channel.queue_declare(queue_name, durable=True)
         channel.queue_bind(exchange="amq.direct", queue=queue_name, routing_key=queue_name)
         connection.close()
 

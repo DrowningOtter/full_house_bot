@@ -274,7 +274,11 @@ async def newsletter_update_handler():
     async with queue.iterator() as queue_iter:
         async for message in queue_iter:
             async with message.process():
-                json_data = json.loads(message.body.decode("utf-8"))
+                try:
+                    json_data = json.loads(message.body.decode("utf-8"))
+                except Exception as ex:
+                    logging.error(ex)
+                    break
                 await send_newsletter(json_data["newsletter_text"], json_data["user_list"])
     await connection.close()
 

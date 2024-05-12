@@ -11,6 +11,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormVi
 from django.shortcuts import get_object_or_404
 from django.db import connection as db_connection
 from django.http import HttpResponseServerError
+from time import sleep
 
 
 from .models import House, Question, Photo, Video, Prompt
@@ -361,7 +362,7 @@ def send_newsletter(request):
         form = NewsletterForm(request.POST)
         if form.is_valid():
             text_value = form.cleaned_data['text_field']
-            print('DEBUG\n', text_value)
+            print('DEBUG: ', text_value)
             with db_connection.cursor() as cursor:
                 cursor.execute(f"""SELECT tg_user_id FROM bot_registereduser WHERE user_id = {request.user.id}""")
                 user_list = [item[0] for item in cursor.fetchall()]
@@ -371,7 +372,7 @@ def send_newsletter(request):
             queue_name = RABBITMQ_QUEUE_NAME + str(request.user.id)
             print("DEBUG: queue_name=", queue_name)
             try:
-                queue = channel.queue_declare(queue_name, passive=True)
+                queue = channel.queue_declare(queue_name, durable=True)
             except ValueError:
                 return HttpResponseServerError("Internal Server Error: Something went wrong.")
             data = { "user_list": user_list, "newsletter_text": text_value }
@@ -419,7 +420,7 @@ def create_queue(request):
         return
     channel = connection.channel()
     queue_name = RABBITMQ_QUEUE_NAME + request.GET.get('id')
-    queue = channel.queue_declare(queue_name)
+    queue = channel.queue_declare(queue_name, durable=True)
     channel.queue_bind(exchange="amq.direct", queue=queue_name, routing_key=queue_name)
     connection.close()
     return redirect(reverse("bot:index"))

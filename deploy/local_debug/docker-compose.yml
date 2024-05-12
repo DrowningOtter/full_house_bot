@@ -28,17 +28,24 @@ services:
       - rabbit
     volumes:
       - ../../bot_site/media/:/app/media/
+    restart: always
 
-  bot:
-    build:
-      context: ../../bot
-      dockerfile: Dockerfile
-    command: python main.py
-    # command: /bin/bash -c "while true; do echo 'admin alive'; sleep 240; done"
-    networks:
-      - botnet
-    volumes:
-      - ../../bot_site/media/:/media/
+  # bot:
+  #   build:
+  #     context: ../../bot
+  #     dockerfile: Dockerfile
+  #   command: python main.py
+  #   environment:
+  #     TGBOT_API_TOKEN: 5783267477:AAGMGx6q2_s6-JPirrNYiYQ0UbA17l8dXXE
+  #     USER_ID: 2
+  #   # command: /bin/bash -c "while true; do echo 'admin alive'; sleep 240; done"
+  #   networks:
+  #     - botnet
+  #   volumes:
+  #     - ../../bot_site/media/:/media/
+  #   depends_on:
+  #     - admin
+  #   restart: always
 
   rabbit:
     image: rabbitmq:3.10.7-management
@@ -46,7 +53,7 @@ services:
     ports:
      - 15672:15672
      
-    restart: always
+    # restart: always
     environment:
      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 536870912
     volumes:
@@ -58,7 +65,7 @@ services:
     image: postgres:16
     container_name: postgres_host
     hostname: postgres_host
-    restart: always
+    # restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 12345
