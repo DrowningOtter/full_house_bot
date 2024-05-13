@@ -13,6 +13,7 @@
 		{% csrf_token %}
 		{{ form.non_form_errors }}
 		<div class="form-row">
+			{{ form.errors }}
 			<label for="{{form.text_field.id_for_label}}" class="label-widget" readonly>{{ form.text_field.label}}</label>
 			{{form.text_field}}
 		</div>

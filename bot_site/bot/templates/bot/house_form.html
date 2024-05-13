@@ -38,6 +38,7 @@
 					</div>
 					{% else %}
 					<div class="file-upload-wrapper">
+						{{ field.errors }}
 						<label class="label-for-file-upload" for="{{photo.photo.id_for_label}}">
 							{% translate "Choose file" %}
 						</label>

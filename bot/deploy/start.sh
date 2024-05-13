@@ -1,13 +1,4 @@
-if [[ -z "${TGBOT_API_TOKEN}" ]]; then
-    echo specify bot token
-    exit 1
-fi
-if [[ -z "${USER_ID}" ]]; then
-    echo specify user id
-    exit 1
-fi
-
-while getopts "db" opt; do
+while getopts "dbs" opt; do
     case $opt in 
         d)
             option_d=true
@@ -38,9 +29,18 @@ if [[ "$option_d" = true ]]; then
     args+=" -d"
 fi
 
-# docker compose up bot $args --no-recreate
-command=run
-if [[ "$option_start" = true ]]; then
-    command=start
+if [[ -z "${TGBOT_API_TOKEN}" && "$option_start" != true ]]; then
+    echo specify bot token
+    exit 1
 fi
-docker $command --network local_debug_botnet -e TGBOT_API_TOKEN=$TGBOT_API_TOKEN -e USER_ID=$USER_ID --name bot_$USER_ID $args -v ./../../bot_site/media:/media tgbot_image
+if [[ -z "${USER_ID}" ]]; then
+    echo specify user id
+    exit 1
+fi
+
+# docker compose up bot $args --no-recreate
+if [[ "$option_start" = true ]]; then
+    docker start bot_$USER_ID
+else
+    docker run --network local_debug_botnet -e TGBOT_API_TOKEN=$TGBOT_API_TOKEN -e USER_ID=$USER_ID --name bot_$USER_ID $args -v ./../../bot_site/media:/media tgbot_image
+fi

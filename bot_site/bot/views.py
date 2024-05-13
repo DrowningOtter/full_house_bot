@@ -21,6 +21,7 @@ from .forms import (PhotoForm, HouseForm, QuestionForm,
                     PromptFormSet, NewsletterForm)
 
 from pika import BlockingConnection, URLParameters
+from pika.exceptions import ChannelClosedByBroker
 from bot_management.conf import RABBITMQ_LOGIN, RABBITMQ_PASSWORD, RABBITMQ_QUEUE_NAME, RABBITMQ_HOST_NAME
 
 @login_required
@@ -371,14 +372,23 @@ def send_newsletter(request):
             channel = connection.channel()
             queue_name = RABBITMQ_QUEUE_NAME + str(request.user.id)
             print("DEBUG: queue_name=", queue_name)
+            # TODO не всегда нужно декларить, сначала нужно проверить что существует, если нет - только тогда декларить
+            # вообще нужно переработать логику, чтобы очередь создавалась при регистрации юзера, а здесь был только коннект
             try:
-                queue = channel.queue_declare(queue_name, durable=True)
-            except ValueError:
-                return HttpResponseServerError("Internal Server Error: Something went wrong.")
+                channel.queue_declare(queue_name, passive=True)
+            except ChannelClosedByBroker as ex:
+                try:
+                    print(f"got exception while trying to get queue: {ex}, type: {type(ex)}")
+                    connection = BlockingConnection(URLParameters(f"amqp://{RABBITMQ_LOGIN}:{RABBITMQ_PASSWORD}@{RABBITMQ_HOST_NAME}/"))
+                    channel = connection.channel()
+                    channel.queue_declare(queue_name)
+                    channel.queue_bind(exchange="amq.direct", queue=queue_name, routing_key=queue_name)
+                except Exception as ex2:
+                    print(f"error creating queue {queue_name}: {ex2}")
+                    return HttpResponseServerError("Internal Server Error: Something went wrong.")
             data = { "user_list": user_list, "newsletter_text": text_value }
             message_body = json.dumps(data)
             channel.basic_publish(
-                # pika.Message(body=message_body.encode("utf-8")),
                 exchange="amq.direct",
                 body=message_body.encode("utf-8"),
                 routing_key=queue_name,
