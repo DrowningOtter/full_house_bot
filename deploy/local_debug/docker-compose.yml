@@ -25,7 +25,7 @@ services:
       - botnet
     depends_on:
       - postgres
-      - rabbit
+      # - rabbit
     volumes:
       - ../../bot_site/media/:/app/media/
     restart: always
